@@ -1,0 +1,7 @@
+/*!
+ * \defgroup block GNU Radio VERILOG C++ Signal Processing Blocks
+ * \brief All C++ blocks that can be used from the VERILOG GNU Radio
+ *        module are listed here or in the subcategories below.
+ *
+ */
+
