@@ -41,3 +41,4 @@ include(GrTest)
 
 set(GR_TEST_TARGET_DEPS gnuradio-verilog)
 set(GR_TEST_PYTHON_DIRS ${CMAKE_BINARY_DIR}/swig)
+GR_ADD_TEST(qa_verilog_ii ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_verilog_ii.py)
