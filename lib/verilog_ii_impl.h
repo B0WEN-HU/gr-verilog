@@ -22,6 +22,7 @@
 #define INCLUDED_VERILOG_VERILOG_II_IMPL_H
 
 #include <verilog/verilog_ii.h>
+#include <string>
 
 namespace gr {
   namespace verilog {
@@ -29,7 +30,39 @@ namespace gr {
     class verilog_ii_impl : public verilog_ii
     {
      private:
-      // Nothing to declare in this block.
+      /* verilog related private members  */
+      
+      // The path and name of user's verilog module
+      // Construct by (const char *filename)
+      std::string verilog_module_path;
+      std::string verilog_module_name;
+      
+      // The path of makefile template
+      std::string makefile_template_path;
+
+      // The path of cpp template 
+      std::string cpp_template_path;
+
+      // The class that call the shell command make
+      // Use sh_make.cmd(std::string cmd) to call bash
+      Shell_cmd sh_make;
+
+      // The class that store the verilog module data
+      // Including port map and input/output data
+      // Use verilog_data.set_input( (ITYPE) in[i] ) to set input data
+      // Usr verilog_data.set_output( (OTYPE) out[i] ) to set output data
+      Verilog_data verilog_data;
+
+      // The class that control the shared library
+      // Use verilog_module_so.load_lib(std::string verilog_module_path, std::string lib_name) to load library
+      // Use verilog_module_so.find_func(std::string func_name) to get the function
+      // Use verilog_module_so.release_lib(std::string string lib_name) to release the library
+      Shared_lib verilog_module_so;
+
+      // typedef void (*Simulation_func)(const verilog_data.get_input_addr(), verilog_data.get_output_addr());
+      Simulation_func sim;
+      
+      /* verilog related private members  */
 
      public:
       verilog_ii_impl(const char *filename);
