@@ -30,7 +30,7 @@ namespace gr {
     class verilog_ii_impl : public verilog_ii
     {
      private:
-      /* verilog related private members  */
+      /* gr::verilog::verilog_ii private member variables  */
       
       // The path and name of user's verilog module
       // Construct by (const char *filename)
@@ -62,7 +62,30 @@ namespace gr {
       // typedef void (*Simulation_func)(const verilog_data.get_input_addr(), verilog_data.get_output_addr());
       Simulation_func sim;
       
-      /* verilog related private members  */
+      /* gr::verilog::verilog_ii private member variables  */
+
+
+
+      /* gr::verilog::verilog_ii private member functions */
+
+      /* Construct routine */
+      // The function that call Verilator (Makefile) to generate the cpp code
+      bool generate_verilator_file() throw(std::runtime_error);
+
+      // Parse the Verilator generate file and extract the port map
+      // The port map should be stored in Veriloag_data verilog_data
+      bool init_port_map() throw(std::logic_error);
+
+      // The function that call g++ (Makefile) to generate the shared library
+      // There might be some modifications on the tempalte cpp interface file
+      bool generate_so() throw(std::runtime_error);
+
+      // The function that load the shared library that generated above
+      // with the Shared_lib verilog_module_so
+      bool load_lib() throw(std::runtime_error);
+      /* Construct routine */
+
+      /* gr::verilog::verilog_ii private member functions */
 
      public:
       verilog_ii_impl(const char *filename);
