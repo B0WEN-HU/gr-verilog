@@ -24,8 +24,13 @@
 #include <verilog/verilog_ii.h>
 #include <string>
 
+#define SLASH "/"
+
 namespace gr {
   namespace verilog {
+
+    typedef unsigned int ITYPE;
+    typedef unsigned int OTYPE;
 
     class verilog_ii_impl : public verilog_ii
     {
@@ -45,7 +50,7 @@ namespace gr {
 
       // The class that call the shell command make
       // Use sh_make.cmd(std::string cmd) to call bash
-      Shell_cmd sh_make;
+      // Shell_cmd sh_make;
 
       // The class that store the verilog module data
       // Including port map and input/output data
