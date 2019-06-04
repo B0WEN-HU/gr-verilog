@@ -116,6 +116,12 @@ namespace gr {
      */
     verilog_ii_impl::~verilog_ii_impl()
     {
+      /* Release the shared library */
+      try {
+        this->release_lib();
+      } catch (...) {
+        /* TODO: Handle the error */
+      }
     }
 
     int
