@@ -49,7 +49,7 @@ namespace gr {
       std::string cpp_template_path;
 
       // The class that call the shell command make
-      // Use sh_make.cmd(std::string cmd) to call bash
+      // Use sh_make.exec(const char *cmd) to call bash
       // Shell_cmd sh_make;
 
       // The class that store the verilog module data
