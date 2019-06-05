@@ -24,13 +24,16 @@
 #include <verilog/verilog_ii.h>
 #include <string>
 
+#include "gr_verilog_iotype.h"
+
 #define SLASH "/"
 
 namespace gr {
   namespace verilog {
 
-    typedef unsigned int ITYPE;
-    typedef unsigned int OTYPE;
+    //#include "gr_verilog_iotype.h"
+    //typedef unsigned int ITYPE;
+    //typedef unsigned int OTYPE;
 
     class verilog_ii_impl : public verilog_ii
     {
