@@ -30,13 +30,15 @@ namespace gr {
   namespace verilog {
 
     // The constructor
-    Verilog_data::Verilog_data() {
+    template <class VLmodule>
+    Verilog_data<VLmodule>::Verilog_data() {
       this->port_map.clear();
       this->port_list.clear();
     }
 
     // The destructor
-    Verilog_data::~Verilog_data() {
+    template <class VLmodule>
+    Verilog_data<VLmodule>::~Verilog_data() {
       this->port_map.clear();
       this->port_list.clear();
     }
@@ -44,15 +46,60 @@ namespace gr {
     // The parse_port function of the class
     // The function that read the parse the source file and get the port_map and port_list
     // TODO:
-    int Verilog_data::parse_port(const char *source_file_path, const char *source_file_type)
+    template <class VLmodule>
+    int Verilog_data<VLmodule>::parse_port(const char *source_file_path, const char *source_file_type)
     {}
+
+    // The add_port function of the class
+    // main block version
+    template <class VLmodule>
+    int Verilog_data<VLmodule>::add_port(const char *port_name, PORT_IO_TYPE iotype, unsigned int port_width)
+    {
+      //Port_info<VLmodule> port_tmp = Port_info<VLmodule>(iotype, port_width);
+      this->port_list.push_back(Port_info<VLmodule>(iotype, port_width));
+      
+      std::pair<std::map<std::string, std::vector<Port_info<VLmodule>>::iterator>::iterator, bool> map_ret;
+      map_ret =
+      this->port_map.insert( std::pair
+                            <std::string, std::vector<Port_info<VLmodule>>::iterator>
+                            (std::string(port_name), this->port_list.back()) );
+      if (false == map_ret.second) {
+        // TODO: throw error
+        // There are duplicate port name
+        return _EXIT_FAILURE;
+      }
+      return _EXIT_SUCCESS;
+    }
+
+    // The add_port function of the class
+    // shared library version
+    // .add_port(&Vmodule::portname, "portname", INPUT_PORT/OUTPUT_PORT, sizeof(Vmodule::portname))
+    template <class VLmodule, class PORT_ADDR>
+    int Verilog_data<VLmodule>::add_port(PORT_ADDR port_addr , const char *port_name, PORT_IO_TYPE iotype, unsigned int port_width)
+    {
+      this->port_list.push_back(Port_info<VLmodule>(iotype, port_width, port_addr));
+      
+      std::pair<std::map<std::string, std::vector<Port_info<VLmodule>>::iterator>::iterator, bool> map_ret;
+      map_ret =
+      this->port_map.insert( std::pair
+                            <std::string, std::vector<Port_info<VLmodule>>::iterator>
+                            (std::string(port_name), this->port_list.back()) );
+      if (false == map_ret.second) {
+        // TODO: throw error
+        // There are duplicate port name
+        return _EXIT_FAILURE;
+      }
+      return _EXIT_SUCCESS;
+    }
+
 
     // the set_input_port function of the class
     // The function that set the input port of the VLmodule
     // It should be used in the shared library rather in the gr-verilog block
-    int set_input_port(VLmodule &module, const char *port_name, const ITYPE &value) const
+    template <class VLmodule>
+    int Verilog_data<VLmodule>::set_input_port(VLmodule &module, const char *port_name, const ITYPE &value) const
     {
-      std::map<std::string, vector<Port_info>::iterator>::iterator port_map_iter;
+      std::map<std::string, std::vector<Port_info<VLmodule>>::iterator>::iterator port_map_iter;
       port_map_iter = this->port_map.find(std::string(port_name));
       if (port_map_iter != this->port_map.end()) {
         try {
@@ -67,9 +114,11 @@ namespace gr {
       }
     }
 
-    int Verilog_data::get_output_port(VLmodule &moduel, const char *port_name, OTYPE &value)
+    // the get_output_port function of the class
+    template <class VLmodule>
+    int Verilog_data<VLmodule>::get_output_port(const VLmodule &moduel, const char *port_name, OTYPE &value)
     {
-      std::map<std::string, vector<Port_info>::iterator>::iterator port_map_iter;
+      std::map<std::string, std::vector<Port_info<VLmodule>>::iterator>::iterator port_map_iter;
       port_map_iter = this->port_map.find(std::string(port_name));
       if (port_map_iter != this->port_map.end()) {
         try {
