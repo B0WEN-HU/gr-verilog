@@ -60,9 +60,7 @@ namespace gr {
       
       std::pair<std::map<std::string, std::vector<Port_info<VLmodule>>::iterator>::iterator, bool> map_ret;
       map_ret =
-      this->port_map.insert( std::pair
-                            <std::string, std::vector<Port_info<VLmodule>>::iterator>
-                            (std::string(port_name), this->port_list.back()) );
+      this->port_map.insert( make_pair(std::string(port_name), this->port_list.end() - 1) );
       if (false == map_ret.second) {
         // TODO: throw error
         // There are duplicate port name
@@ -74,16 +72,15 @@ namespace gr {
     // The add_port function of the class
     // shared library version
     // .add_port(&Vmodule::portname, "portname", INPUT_PORT/OUTPUT_PORT, sizeof(Vmodule::portname))
-    template <class VLmodule, class PORT_ADDR>
-    int Verilog_data<VLmodule>::add_port(PORT_ADDR port_addr , const char *port_name, PORT_IO_TYPE iotype, unsigned int port_width)
+    template <class VLmodule>
+    template <class PORT_ADDR>
+    int Verilog_data<VLmodule>::add_port(const VLmodule &module, const char *port_name, PORT_IO_TYPE iotype, unsigned int port_width)
     {
       this->port_list.push_back(Port_info<VLmodule>(iotype, port_width, port_addr));
       
       std::pair<std::map<std::string, std::vector<Port_info<VLmodule>>::iterator>::iterator, bool> map_ret;
       map_ret =
-      this->port_map.insert( std::pair
-                            <std::string, std::vector<Port_info<VLmodule>>::iterator>
-                            (std::string(port_name), this->port_list.back()) );
+      this->port_map.insert( make_pair(std::string(port_name), this->port_list.end() - 1) );
       if (false == map_ret.second) {
         // TODO: throw error
         // There are duplicate port name

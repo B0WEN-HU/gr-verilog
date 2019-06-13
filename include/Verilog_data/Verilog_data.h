@@ -33,6 +33,7 @@ namespace gr {
   namespace verilog {
 
     typedef bool PORT_IO_TYPE;
+    typedef ITYPE PORT_TYPE;
     const PORT_IO_TYPE INPUT_PORT = true;
     const PORT_IO_TYPE OUTPUT_PORT = false;
 
@@ -73,31 +74,31 @@ namespace gr {
         }
       }
       
-      Port_info(PORT_IO_TYPE iotype, unsigned int port_width, uint8_t VLmodule::*port_addr)
+      Port_info(uint8_t VLmodule::*port_addr, PORT_IO_TYPE iotype, unsigned int port_width = 8)
       {
         this->iotype = iotype;
         this->port_width = UINT8;
         this->port_ptr.uint8_p = port_addr;
       }
 
-      Port_info(PORT_IO_TYPE iotype, unsigned int port_width, uint16_t VLmodule::*port_addr)
+      Port_info(uint16_t VLmodule::*port_addr, PORT_IO_TYPE iotype, unsigned int port_width = 16)
       {
         this->iotype = iotype;
-        this->port_width = UNIT16;
+        this->port_width = UINT16;
         this->port_ptr.uint16_p = port_addr;
       }
 
-      Port_info(PORT_IO_TYPE iotype, unsigned int port_width, uint32_t VLmodule::*port_addr)
+      Port_info(uint32_t VLmodule::*port_addr, PORT_IO_TYPE iotype, unsigned int port_width = 32)
       {
         this->iotype = iotype;
-        this->port_width = UNIT32;
+        this->port_width = UINT32;
         this->port_ptr.uint32_p = port_addr;
       }
 
-      Port_info(PORT_IO_TYPE iotype, unsigned int port_width, uint64_t VLmodule::*port_addr)
+      Port_info(uint64_t VLmodule::*port_addr, PORT_IO_TYPE iotype, unsigned int port_width = 64)
       {
         this->iotype = iotype;
-        this->port_width = UNIT64;
+        this->port_width = UINT64;
         this->port_ptr.uint64_p = port_addr;
       }
 
@@ -106,7 +107,7 @@ namespace gr {
       // port data
       PORT_IO_TYPE iotype;
       PORT_TYPE value;
-      enum {UINT8, UNIT16, UINT32, UINT64} port_width;
+      enum {UINT8, UINT16, UINT32, UINT64} port_width;
 
       union
       {
@@ -115,11 +116,11 @@ namespace gr {
         uint8_t  VLmodule::*uint8_p;
         uint16_t VLmodule::*uint16_p;
         uint32_t VLmodule::*uint32_p;
-        uint32_t VLmodule::*uint64_p;
+        uint64_t VLmodule::*uint64_p;
       } port_ptr;
       
       void set_input_port(VLmodule &module, unsigned int value) {
-        if (INPUT_PORT != PORT_IO_TYPE) {
+        if (INPUT_PORT != this->iotype) {
           // TODO: throw error
           return ;
         }
@@ -139,6 +140,7 @@ namespace gr {
           break;
 
         case UINT64:
+          // TODO: fix the convertion from uint to ulonglong
           module.*((this->port_ptr).uint64_p) = (uint64_t)value;
           break;
         
@@ -152,7 +154,7 @@ namespace gr {
 
       // return the port value
       unsigned int get_output_port(const VLmodule &module) {
-        if (OUTPUT_PORT != PORT_IO_TYPE) {
+        if (OUTPUT_PORT != this->iotype) {
           // TODO: throw error
           return 0;
         }
@@ -173,6 +175,7 @@ namespace gr {
           break;
 
         case UINT64:
+          // TODO: fix the convertion from ulonglong to uint
           value_tmp = (unsigned int)module.*((this->port_ptr).uint64_p);
           break;
         
@@ -193,8 +196,9 @@ namespace gr {
     {
      private:
       // Private members
+      typedef typename std::vector<Port_info<VLmodule>>::iterator vec_iter;
 
-      std::map<std::string, vector<Port_info<VLmodule>>::iterator> port_map;
+      std::map<std::string, vec_iter> port_map;
 
       std::vector<Port_info<VLmodule>> port_list;
 
@@ -221,6 +225,7 @@ namespace gr {
       // It will return 0 if parse the code successfully
       // shared library version
       // with Vmodule
+      template <class PORT_ADDR>
       int add_port(const VLmodule &module, const char *port_name, PORT_IO_TYPE iotype, unsigned int port_width);
 
       // The function that set the value of the input port
