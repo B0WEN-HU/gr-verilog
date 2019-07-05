@@ -58,7 +58,9 @@ namespace gr {
       //Port_info<VLmodule> port_tmp = Port_info<VLmodule>(iotype, port_width);
       this->port_list.push_back(Port_info<VLmodule>(iotype, port_width));
       
-      std::pair<std::map<std::string, std::vector<Port_info<VLmodule>>::iterator>::iterator, bool> map_ret;
+      typedef typename std::vector<Port_info<VLmodule>>::iterator vec_iter;
+      typedef typename std::map<std::string, vec_iter>::iterator map_iter;
+      std::pair<map_iter, bool> map_ret;
       map_ret =
       this->port_map.insert( make_pair(std::string(port_name), this->port_list.end() - 1) );
       if (false == map_ret.second) {
@@ -74,11 +76,13 @@ namespace gr {
     // .add_port(&Vmodule::portname, "portname", INPUT_PORT/OUTPUT_PORT, sizeof(Vmodule::portname))
     template <class VLmodule>
     template <class PORT_ADDR>
-    int Verilog_data<VLmodule>::add_port(const VLmodule &module, const char *port_name, PORT_IO_TYPE iotype, unsigned int port_width)
+    int Verilog_data<VLmodule>::add_port(const VLmodule &module, PORT_ADDR port_addr, const char *port_name, PORT_IO_TYPE iotype, unsigned int port_width)
     {
       this->port_list.push_back(Port_info<VLmodule>(iotype, port_width, port_addr));
       
-      std::pair<std::map<std::string, std::vector<Port_info<VLmodule>>::iterator>::iterator, bool> map_ret;
+      typedef typename std::vector<Port_info<VLmodule>>::iterator vec_iter;
+      typedef typename std::map<std::string, vec_iter>::iterator map_iter;
+      std::pair<map_iter, bool> map_ret;
       map_ret =
       this->port_map.insert( make_pair(std::string(port_name), this->port_list.end() - 1) );
       if (false == map_ret.second) {
@@ -96,7 +100,9 @@ namespace gr {
     template <class VLmodule>
     int Verilog_data<VLmodule>::set_input_port(VLmodule &module, const char *port_name, const ITYPE &value) const
     {
-      std::map<std::string, std::vector<Port_info<VLmodule>>::iterator>::iterator port_map_iter;
+      typedef typename std::vector<Port_info<VLmodule>>::iterator vec_iter;
+      typedef typename std::map<std::string, vec_iter>::iterator map_iter;
+      map_iter port_map_iter;
       port_map_iter = this->port_map.find(std::string(port_name));
       if (port_map_iter != this->port_map.end()) {
         try {
@@ -113,9 +119,11 @@ namespace gr {
 
     // the get_output_port function of the class
     template <class VLmodule>
-    int Verilog_data<VLmodule>::get_output_port(const VLmodule &moduel, const char *port_name, OTYPE &value)
+    int Verilog_data<VLmodule>::get_output_port(const VLmodule &module, const char *port_name, OTYPE &value)
     {
-      std::map<std::string, std::vector<Port_info<VLmodule>>::iterator>::iterator port_map_iter;
+      typedef typename std::vector<Port_info<VLmodule>>::iterator vec_iter;
+      typedef typename std::map<std::string, vec_iter>::iterator map_iter;
+      map_iter port_map_iter;
       port_map_iter = this->port_map.find(std::string(port_name));
       if (port_map_iter != this->port_map.end()) {
         try {

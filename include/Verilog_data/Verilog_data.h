@@ -226,7 +226,7 @@ namespace gr {
       // shared library version
       // with Vmodule
       template <class PORT_ADDR>
-      int add_port(const VLmodule &module, const char *port_name, PORT_IO_TYPE iotype, unsigned int port_width);
+      int add_port(const VLmodule &module, PORT_ADDR port_addr, const char *port_name, PORT_IO_TYPE iotype, unsigned int port_width);
 
       // The function that set the value of the input port
       // It will return -1 when there is any error
@@ -238,8 +238,160 @@ namespace gr {
       // It will return -1 when there is any error
       // It will return 0 if parse the code successfully
       // template <Vmodule>
-      int get_output_port(const VLmodule &moduel, const char *port_name, OTYPE &value);
+      int get_output_port(const VLmodule &module, const char *port_name, OTYPE &value);
+
+      // DEBUG
+      std::string print_port(const char *port_name);
+
     };
+
+
+
+
+
+
+    /*
+     *  Verilog_data.cpp
+     */
+    
+    // The constructor
+    template <class VLmodule>
+    Verilog_data<VLmodule>::Verilog_data() {
+      this->port_map.clear();
+      this->port_list.clear();
+    }
+
+    // The destructor
+    template <class VLmodule>
+    Verilog_data<VLmodule>::~Verilog_data() {
+      this->port_map.clear();
+      this->port_list.clear();
+    }
+
+    // The parse_port function of the class
+    // The function that read the parse the source file and get the port_map and port_list
+    // TODO:
+    template <class VLmodule>
+    int Verilog_data<VLmodule>::parse_port(const char *source_file_path, const char *source_file_type)
+    {}
+
+    // The add_port function of the class
+    // main block version
+    template <class VLmodule>
+    int Verilog_data<VLmodule>::add_port(const char *port_name, PORT_IO_TYPE iotype, unsigned int port_width)
+    {
+      //Port_info<VLmodule> port_tmp = Port_info<VLmodule>(iotype, port_width);
+      this->port_list.push_back(Port_info<VLmodule>(iotype, port_width));
+      
+      typedef typename std::vector<Port_info<VLmodule>>::iterator vec_iter;
+      typedef typename std::map<std::string, vec_iter>::iterator map_iter;
+      std::pair<map_iter, bool> map_ret;
+      map_ret =
+      this->port_map.insert( make_pair(std::string(port_name), this->port_list.end() - 1) );
+      if (false == map_ret.second) {
+        // TODO: throw error
+        // There are duplicate port name
+        return _EXIT_FAILURE;
+      }
+      return _EXIT_SUCCESS;
+    }
+
+    // The add_port function of the class
+    // shared library version
+    // .add_port(&Vmodule::portname, "portname", INPUT_PORT/OUTPUT_PORT, sizeof(Vmodule::portname))
+    template <class VLmodule>
+    template <class PORT_ADDR>
+    int Verilog_data<VLmodule>::add_port(const VLmodule &module, PORT_ADDR port_addr, const char *port_name, PORT_IO_TYPE iotype, unsigned int port_width)
+    {
+      this->port_list.push_back(Port_info<VLmodule>(iotype, port_width, port_addr));
+      
+      typedef typename std::vector<Port_info<VLmodule>>::iterator vec_iter;
+      typedef typename std::map<std::string, vec_iter>::iterator map_iter;
+      std::pair<map_iter, bool> map_ret;
+      map_ret =
+      this->port_map.insert( make_pair(std::string(port_name), this->port_list.end() - 1) );
+      if (false == map_ret.second) {
+        // TODO: throw error
+        // There are duplicate port name
+        return _EXIT_FAILURE;
+      }
+      return _EXIT_SUCCESS;
+    }
+
+
+    // the set_input_port function of the class
+    // The function that set the input port of the VLmodule
+    // It should be used in the shared library rather in the gr-verilog block
+    template <class VLmodule>
+    int Verilog_data<VLmodule>::set_input_port(VLmodule &module, const char *port_name, const ITYPE &value) const
+    {
+      typedef typename std::vector<Port_info<VLmodule>>::iterator vec_iter;
+      typedef typename std::map<std::string, vec_iter>::iterator map_iter;
+      map_iter port_map_iter;
+      port_map_iter = this->port_map.find(std::string(port_name));
+      if (port_map_iter != this->port_map.end()) {
+        try {
+          (port_map_iter->second)->set_input_port(module, value);
+        } catch (...) {
+          // TODO: Handle the error
+        }
+        return _EXIT_SUCCESS;
+      }
+      else {
+        return _EXIT_FAILURE;
+      }
+    }
+
+    // the get_output_port function of the class
+    template <class VLmodule>
+    int Verilog_data<VLmodule>::get_output_port(const VLmodule &module, const char *port_name, OTYPE &value)
+    {
+      typedef typename std::vector<Port_info<VLmodule>>::iterator vec_iter;
+      typedef typename std::map<std::string, vec_iter>::iterator map_iter;
+      map_iter port_map_iter;
+      port_map_iter = this->port_map.find(std::string(port_name));
+      if (port_map_iter != this->port_map.end()) {
+        try {
+          value = (port_map_iter->second)->get_output_port(module);
+        } catch (...) {
+          // TODO: Handle the error
+        }
+        return _EXIT_SUCCESS;
+      }
+      else {
+        return _EXIT_FAILURE;
+      }
+    }
+
+
+    // DEBUG
+    template <class VLmodule>
+    std::string Verilog_data<VLmodule>::print_port(const char *port_name)
+    {
+      std::string port_msg = "";
+      typedef typename std::vector<Port_info<VLmodule>>::iterator vec_iter;
+      typedef typename std::map<std::string, vec_iter>::iterator map_iter;
+      map_iter port_map_iter;
+      port_map_iter = this->port_map.find(std::string(port_name));
+      if (port_map_iter != this->port_map.end()) {
+        try {
+          port_msg += "Port_type = ";
+          port_msg += std::to_string((port_map_iter->second)->iotype);
+          port_msg += "; ";
+
+          port_msg += "Port_width = ";
+          port_msg += std::to_string(8 * (((port_map_iter->second)->port_width) + 1));
+          port_msg += ";";
+        } catch (...) {
+          // TODO: Handle the error
+        }
+        return _EXIT_SUCCESS;
+      }
+      else {
+        port_msg = "PORT NOT FOUND";
+        return port_msg;
+      }
+    }
 
   } // namespace verilog
 } // namespace gr
