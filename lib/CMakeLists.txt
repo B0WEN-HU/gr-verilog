@@ -27,6 +27,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 
 list(APPEND verilog_sources
     verilog_ii_impl.cc
+    verilog_axi_ii_impl.cc
 )
 
 set(verilog_sources "${verilog_sources}" PARENT_SCOPE)
