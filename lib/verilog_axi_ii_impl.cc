@@ -30,6 +30,10 @@
 #define AXI_MODULE_CL_MAKEFILE "axi_module_cl.mk"
 #define CPP_TEMPLATE_NAME "axi_module.cpp"
 #define SHARED_LIB_NAME "lib_axi_module.so"
+#define M_dir "obj_dir"
+
+#define _EXIT_SUCCESS 0
+#define _EXIT_FAILURE -1
 
 namespace gr {
   namespace verilog {
@@ -116,6 +120,12 @@ namespace gr {
      */
     verilog_axi_ii_impl::~verilog_axi_ii_impl()
     {
+      /* Release the shared library */
+      try {
+        this->release_lib();
+      } catch (...) {
+        /* TODO: Handle the error */
+      }
     }
 
     int
@@ -123,10 +133,39 @@ namespace gr {
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
     {
-      const <+ITYPE+> *in = (const <+ITYPE+> *) input_items[0];
-      <+OTYPE+> *out = (<+OTYPE+> *) output_items[0];
+      const ITYPE *in = (const ITYPE *) input_items[0];
+      OTYPE *out = (OTYPE *) output_items[0];
+
+      // Initial and Reset the module
+      if (NULL == this->sim)
+      {
+        typedef void (*Initial_func) (void);
+        typedef void (*Reset_func) (void);
+        
+        Initial_func axi_init;
+        Reset_func axi_reset;
+
+        axi_init  =
+            (Initial_func)this->verilog_module_so.find_func("AXI_init");
+        axi_reset =
+            (Reset_func)this->verilog_module_so.find_func("AXI_reset");
+
+        if ((NULL == axi_init) or (NULL == axi_reset)) {
+          return _EXIT_FAILURE;
+        }
+
+        axi_init();
+        axi_reset();
+
+        this->sim =
+            (Simulation_func)this->verilog_module_so.find_func("AXI_transfer");
+      }
 
       // Do <+signal processing+>
+      for (unsigned int i = 0; i < noutput_items; i++)
+      {
+        this->sim(in[i], out[i],this->main_time);
+      }
 
       // Tell runtime system how many output items we produced.
       return noutput_items;
@@ -138,21 +177,24 @@ namespace gr {
     verilog_axi_ii_impl::generate_so() throw(std::runtime_error)
     {
       // const char
-      const string ENTER = "/n";
-      const string BACKSLASH = "\\";
+      const std::string ENTER = "\n";
+      const std::string BACKSLASH = "\\";
+
+      // compile and link error code
+      int cl_err_code = 0;
 
       // Shell_cmd class
       Shell_cmd bash;
-      string cmd = "";
+      std::string cmd = "";
       
       // $ cd ${verilog_module_path}
       cmd += "cd ";
       cmd += this->verilog_module_path;
       cmd += ENTER;
 
-      // $ cp ${makefile_template_path}/axi_module_vl.mk ${verilog_module_path}
-      // #define AXI_MODULE_CL_MAKEFILE "axi_module_vl.mk"
-      cmd += "cp "
+      // $ cp ${makefile_template_path}/axi_module_cl.mk ${verilog_module_path}
+      // #define AXI_MODULE_CL_MAKEFILE "axi_module_cl.mk"
+      cmd += "cp ";
       cmd += this->makefile_template_path + AXI_MODULE_CL_MAKEFILE;
       cmd += " " + this->verilog_module_path;
       cmd += ENTER;
@@ -161,15 +203,32 @@ namespace gr {
       //   USER_VL_FILENAME=user_module_name.v \
       //   USER_CPP_FILENAME=axi_module.cpp \
       //   M_DIR=obj_dir
-      cmd += "make -j -f " + AXI_MODULE_CL_MAKEFILE;
-      cmd += " " + "USER_VL_FILENAME="  + this->verilog_module_name;
-      cmd += " " + "USER_CPP_FILENAME=" + CPP_TEMPLATE_NAME;
-      cmd += " M_DIR=obj_dir"
+      cmd += std::string("") + "make -j -f " + AXI_MODULE_CL_MAKEFILE;
+      cmd += std::string(" ") + "USER_VL_FILENAME=" + this->verilog_module_name;
+      cmd += std::string(" ") + "USER_CPP_FILENAME=" + CPP_TEMPLATE_NAME;
+      cmd += std::string(" ") + " M_DIR=" + M_dir;
       cmd += ENTER;
 
       cmd += ENTER;
       bash.exec(cmd.c_str());
-      // TODO: check and handle the error
+      // TODO: FIX: check and handle the error
+      // if (error) { cl_err_code = -1 }
+
+      return cl_err_code
+    }
+
+    int
+    verilog_axi_ii_impl::load_lib() throw(std::runtime_error)
+    {
+      int lib_err_code;
+      lib_err_code = 
+        this->verilog_module_so.load_lib(this->verilog_module_path + M_dir,
+                                         SHARED_LIB_NAME);
+      if (-1 == lib_err_code) {
+        // TODO: throw(std::runtime_error);
+      }
+
+      return lib_err_code;
     }
 
     /* gr::verilog::verilog_axi_ii private member functions */

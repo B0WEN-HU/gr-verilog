@@ -30,7 +30,7 @@
 namespace gr {
   namespace verilog {
 
-    typedef void (*func_ptr)(const ITYPE &, OTYPE &);
+    typedef void (*func_ptr)(const ITYPE &, OTYPE &, unsigned &time);
 
 #ifdef __linux
     class Shared_lib

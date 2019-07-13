@@ -50,17 +50,17 @@ void AXI_transfer(const unsigned int &gr_input,
   bool out_transfer_flag = false;
   bool transfer_flag = false;
   
-  top->TVALID_IN  = (uint8_t)1;
-  top->TREADY_OUT = (uint8_t)1;
+  top->TVALID_IN  = (uint8_t)true;
+  top->TREADY_OUT = (uint8_t)true;
 
   while (!transfer_flag) {
     
-    if ((uint8_t)1 == top->TREADY_IN) {
+    if ((uint8_t)true == top->TREADY_IN) {
       top->TDATA_IN = (unsigned int)gr_input;
       in_tranfer_flag = true;
     }
 
-    if ((uint8_t)1 == top->TVALID_OUT) {
+    if ((uint8_t)true == top->TVALID_OUT) {
       gr_output = top->TDATA_OUT;
       out_transfer_flag = true;
     }
