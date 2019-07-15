@@ -26,11 +26,16 @@
 #include "verilog_axi_ii_impl.h"
 
 #include "Shell_cmd.h"
+#include "Shared_lib.h"
 
 #define AXI_MODULE_CL_MAKEFILE "axi_module_cl.mk"
 #define CPP_TEMPLATE_NAME "axi_module.cpp"
 #define SHARED_LIB_NAME "lib_axi_module.so"
 #define M_dir "obj_dir"
+
+#define GNU_RADIO_PREFIX "/home/bowen/Documents/GSoC/gr-verilog"
+#define MAKEFILE_TEMPLATE_PATH GNU_RADIO_PREFIX "lib"
+#define CPP_TEMPLATE_PATH GNU_RADIO_PREFIX "lib"
 
 #define _EXIT_SUCCESS 0
 #define _EXIT_FAILURE -1
@@ -50,8 +55,8 @@ namespace gr {
      */
     verilog_axi_ii_impl::verilog_axi_ii_impl(const char *filename)
       : gr::sync_block("verilog_axi_ii",
-              gr::io_signature::make(<+MIN_IN+>, <+MAX_IN+>, sizeof(<+ITYPE+>)),
-              gr::io_signature::make(<+MIN_OUT+>, <+MAX_OUT+>, sizeof(<+OTYPE+>)))
+              gr::io_signature::make(1, 1, sizeof(ITYPE)),
+              gr::io_signature::make(1, 1, sizeof(OTYPE)))
     {
       /* Get module_name and module_path */
       std::string filename_temp(filename);
@@ -214,7 +219,7 @@ namespace gr {
       // TODO: FIX: check and handle the error
       // if (error) { cl_err_code = -1 }
 
-      return cl_err_code
+      return cl_err_code;
     }
 
     int
@@ -222,7 +227,7 @@ namespace gr {
     {
       int lib_err_code;
       lib_err_code = 
-        this->verilog_module_so.load_lib(this->verilog_module_path + M_dir,
+        this->verilog_module_so.load_lib((this->verilog_module_path + M_dir).c_str(),
                                          SHARED_LIB_NAME);
       if (-1 == lib_err_code) {
         // TODO: throw(std::runtime_error);

@@ -26,7 +26,7 @@ include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
 list(APPEND verilog_sources
-    verilog_ii_impl.cc
+    #verilog_ii_impl.cc
     verilog_axi_ii_impl.cc
 )
 

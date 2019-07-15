@@ -33,6 +33,17 @@ class qa_verilog_axi_ii (gr_unittest.TestCase):
 
     def test_001_t (self):
         # set up fg
+        src_data = (1, 3, 5, 9, 10)
+        expected_result = (1, 3, 5, 9, 10)
+        src = blocks.vector_source_i(src_data)
+        vl = verilog.verilog_axi_ii("/home/bowen/Downloads/saxi/saxi_passthru.v")
+        dst = blocks.vector_sink_i()
+        
+        self.tb.connect(src, vl)
+        self.tb.connect(vl, dst)
+        self.tb.run()
+        result_data = dst.data()
+        self.assertFloatTuplesAlmostEqual(expected_result, result_data, 5)
         self.tb.run ()
         # check data
 

@@ -24,6 +24,7 @@
 #include <verilog/verilog_axi_ii.h>
 #include <string>
 
+#include "Shared_lib.h"
 #include "gr_verilog_iotype.h"
 
 #define SLASH "/"
