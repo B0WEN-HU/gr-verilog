@@ -25,6 +25,8 @@
 #include <gnuradio/io_signature.h>
 #include "verilog_axi_ii_impl.h"
 
+#include "verilog/constants.h"
+
 #include "Shell_cmd.h"
 #include "Shared_lib.h"
 
