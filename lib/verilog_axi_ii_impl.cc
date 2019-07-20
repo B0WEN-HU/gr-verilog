@@ -32,12 +32,12 @@
 
 #define AXI_MODULE_CL_MAKEFILE "axi_module_cl.mk"
 #define CPP_TEMPLATE_NAME "axi_module.cpp"
+#define  HEADER_TEMPLATE_NAME "axi_module.h"
 #define SHARED_LIB_NAME "lib_axi_module.so"
 #define M_dir "obj_dir"
 
-#define GNU_RADIO_PREFIX "/home/bowen/Documents/GSoC/gr-verilog/"
-#define MAKEFILE_TEMPLATE_PATH GNU_RADIO_PREFIX "lib/"
-#define CPP_TEMPLATE_PATH GNU_RADIO_PREFIX "lib/"
+#define MAKEFILE_TEMPLATE_PATH templatedir()
+#define CPP_TEMPLATE_PATH templatedir()
 
 #define _EXIT_SUCCESS 0
 #define _EXIT_FAILURE -1
@@ -203,7 +203,9 @@ namespace gr {
       // #define AXI_MODULE_CL_MAKEFILE "axi_module_cl.mk"
       cmd += "cp ";
       cmd += this->makefile_template_path + AXI_MODULE_CL_MAKEFILE;
-      cmd += " " + this->verilog_module_path;
+      cmd += std::string(" ") + this->makefile_template_path + CPP_TEMPLATE_NAME;
+      cmd += std::string(" ") + this->makefile_template_path + HEADER_TEMPLATE_NAME;
+      cmd += std::string(" ") + this->verilog_module_path;
       cmd += ENTER;
 
       // $ make -j -f axi_module_cl.mk \

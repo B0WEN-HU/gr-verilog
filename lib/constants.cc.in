@@ -24,14 +24,17 @@ namespace gr {
   namespace verilog {
     const std::string
     datadir() {
-      return "@GR_PKG_DATA_DIR@"
-    };
+      return "@GR_PKG_DATA_DIR@";
+    }
 
     std::string
     templatedir() {
+      /*
       return gr::prefs::prefs().get_string("verilog",
                                            "templatedir",
                                            datadir());
-    };
+      */
+      return "/home/bowen/Documents/GSoC/gr-verilog-axi/templates/";
+    }
   }
 } //namespace gr::verilog
