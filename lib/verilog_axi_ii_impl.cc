@@ -201,7 +201,7 @@ namespace gr {
 
       // $ cp ${makefile_template_path}/axi_module_cl.mk ${verilog_module_path}
       // #define AXI_MODULE_CL_MAKEFILE "axi_module_cl.mk"
-      cmd += "cp ";
+      cmd += "cp -n ";
       cmd += this->makefile_template_path + AXI_MODULE_CL_MAKEFILE;
       cmd += std::string(" ") + this->makefile_template_path + CPP_TEMPLATE_NAME;
       cmd += std::string(" ") + this->makefile_template_path + HEADER_TEMPLATE_NAME;

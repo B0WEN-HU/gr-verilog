@@ -29,12 +29,12 @@ namespace gr {
 
     std::string
     templatedir() {
-      /*
+      
       return gr::prefs::prefs().get_string("verilog",
                                            "templatedir",
                                            datadir());
-      */
-      return "/home/bowen/Documents/GSoC/gr-verilog-axi/templates/";
+      
+      //return "/home/bowen/Documents/GSoC/gr-verilog-axi/templates/";
     }
   }
 } //namespace gr::verilog
