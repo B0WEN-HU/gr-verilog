@@ -26,6 +26,11 @@ include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
 list(APPEND verilog_sources
+    ${CMAKE_CURRENT_BINARY_DIR}/constants.cc
+    verilog_axi_ii_impl.cc
+    
+    Shell_cmd.cpp
+    Shared_lib.cpp
 )
 
 set(verilog_sources "${verilog_sources}" PARENT_SCOPE)
@@ -80,3 +85,12 @@ GR_ADD_TEST(test_verilog test-verilog)
 message(STATUS "Using install prefix: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "Building for version: ${VERSION} / ${LIBVER}")
 
+########################################################################
+# Configure templates
+########################################################################
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/constants.cc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/constants.cc
+    ESCAPE_QUOTES
+    @ONLY
+)

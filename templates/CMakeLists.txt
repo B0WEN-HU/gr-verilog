@@ -18,9 +18,10 @@
 # Boston, MA 02110-1301, USA.
 
 ########################################################################
-# Install public header files
+# Install gr-verilog template
 ########################################################################
 install(FILES
-    api.h
-    verilog_axi_ii.h DESTINATION include/verilog
+    axi_module_cl.mk 
+    axi_module.h 
+    axi_module.cpp DESTINATION ${GR_PKG_DATA_DIR}/templates
 )
