@@ -55,7 +55,7 @@ namespace gr {
       Shared_lib verilog_module_so;
 
       // typedef void (*Simulation_func)
-      typedef void (*Simulation_func) (const ITYPE &verilog_input, const OTYPE &verilog_ouput, const unsigned int &main_time);
+      typedef unsigned char (*Simulation_func) (const ITYPE &verilog_input, const OTYPE &verilog_ouput, const unsigned int &main_time);
       Simulation_func sim;
 
 

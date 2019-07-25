@@ -17,6 +17,13 @@ void AXI_reset();
 void AXI_transfer(const unsigned int &gr_input,
                   unsigned int &gr_output,
                   unsigned int &time);
+                  
+unsigned char AXI_1_transfer(const unsigned int &gr_input,
+                             unsigned int &gr_output,
+                             unsigned int &time);
+
+unsigned char AXI_transfer_out(unsigned int &gr_output,
+                               unsigned int &time);
 
 void AXI_nop();
 

@@ -25,6 +25,7 @@
 #include <gnuradio/io_signature.h>
 #include "verilog_axi_ii_impl.h"
 
+#include "verilog/constants.h"
 
 #include "Shell_cmd.h"
 #include "Shared_lib.h"
@@ -124,6 +125,9 @@ namespace gr {
      */
     verilog_axi_ii_impl::~verilog_axi_ii_impl()
     {
+      // Dump the output
+
+
       /* Release the shared library */
       try {
         this->release_lib();
@@ -137,6 +141,7 @@ namespace gr {
     {
       /* <+forecast+> e.g. ninput_items_required[0] = noutput_items */
       // TODO: FIX: DO THE RIGHT FORECAST
+      ninput_items_required[0] = noutput_items;
     }
 
     int
@@ -173,20 +178,39 @@ namespace gr {
             (Simulation_func)this->verilog_module_so.find_func("AXI_1_transfer");
       }
 
+      if (NULL == this->sim)
+      { std::cout << "ERROR" << std::endl; }
       // Do <+signal processing+>
       unsigned int input_i;
       unsigned int output_i;
-      for (input_i = 0, output_i = 0; std::max(input_i, output_i) < noutput_items;)
+      for (input_i = 0, output_i = 0; output_i < noutput_items && input_i < ninput_items[0];)
       {
         unsigned char status_code;
         status_code =
-            this->sim(in[i], out[i], this->main_time);
+            this->sim(in[input_i], out[output_i], this->main_time);
+        
         if (status_code & (1 << 1)) {
           ++input_i;
         }
         if (status_code & 1) {
           ++output_i;
         }
+      }
+
+      // Dump the output
+      unsigned char dump_status = 0;
+      while (output_i < noutput_items && 0 == (dump_status & (1 << 1))) {
+        typedef unsigned char (*Dump_func)(const OTYPE &verilog_ouput, const unsigned int &main_time);
+        Dump_func axi_dump;
+        axi_dump =
+            (Dump_func)this->verilog_module_so.find_func("AXI_transfer_out");
+        
+        dump_status = axi_dump(out[output_i], this->main_time);
+
+        if (dump_status & 1) {
+          ++output_i;
+        }
+
       }
 
       // Tell runtime system how many input items we consumed on
