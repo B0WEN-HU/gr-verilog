@@ -175,7 +175,7 @@ namespace gr {
         axi_reset();
 
         this->sim =
-            (Simulation_func)this->verilog_module_so.find_func("AXI_1_transfer");
+            (Simulation_func)this->verilog_module_so.find_func("AXI_async_transfer_ii");
       }
 
       if (NULL == this->sim)
@@ -203,7 +203,7 @@ namespace gr {
         typedef unsigned char (*Dump_func)(const OTYPE &verilog_ouput, const unsigned int &main_time);
         Dump_func axi_dump;
         axi_dump =
-            (Dump_func)this->verilog_module_so.find_func("AXI_transfer_out");
+            (Dump_func)this->verilog_module_so.find_func("AXI_transfer_out_i");
         
         dump_status = axi_dump(out[output_i], this->main_time);
 

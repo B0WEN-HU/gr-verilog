@@ -7,6 +7,9 @@
 #include "axi_module.h"
 
 #define MAX_ITERATION 512 
+#define SKIP_OUTPUT 0
+
+unsigned int skip_output = SKIP_OUTPUT;
 
 /*
  * AXI signals:
@@ -31,6 +34,7 @@ void AXI_init()
 
 void AXI_reset()
 {
+  skip_output = SKIP_OUTPUT;
   top->ACLK = 0;
   top->ARESETn = 0;
   top->eval();
@@ -41,7 +45,7 @@ void AXI_reset()
   top->eval();
 }
 
-void AXI_transfer(const unsigned int &gr_input,
+void AXI_sync_transfer_ii(const unsigned int &gr_input,
                   unsigned int &gr_output,
                   unsigned int &time)
 {
@@ -63,7 +67,7 @@ void AXI_transfer(const unsigned int &gr_input,
     }
 
     if ((uint8_t)true == top->TVALID_OUT) {
-      gr_output = top->TDATA_OUT;
+      gr_output = (unsigned int)top->TDATA_OUT;
       out_transfer_flag = true;
     }
 
@@ -80,7 +84,7 @@ void AXI_transfer(const unsigned int &gr_input,
   time += cycle_tmp;
 }
 
-unsigned char AXI_1_transfer(const unsigned int &gr_input,
+unsigned char AXI_async_transfer_ii(const unsigned int &gr_input,
                   unsigned int &gr_output,
                   unsigned int &time)
 {
@@ -109,15 +113,20 @@ unsigned char AXI_1_transfer(const unsigned int &gr_input,
       in_tranfer_flag = true;
     }
 
-    if ((uint8_t)true == top->TVALID_OUT) {
-      gr_output = top->TDATA_OUT;
-      out_transfer_flag = true;
-    }
-
     top->ACLK = 0;
     top->eval();
     top->ACLK = 1;
     top->eval();
+
+    if ((uint8_t)true == top->TVALID_OUT) {
+      if (skip_output > 0) {
+        --skip_output;
+      }
+      else {
+        gr_output = (unsigned int)top->TDATA_OUT;
+        out_transfer_flag = true;
+      }
+    }
 
     ++cycle_tmp;
 
@@ -133,7 +142,7 @@ unsigned char AXI_1_transfer(const unsigned int &gr_input,
   return status_code;
 }
 
-unsigned char AXI_transfer_out(unsigned int &gr_output,
+unsigned char AXI_transfer_out_i(unsigned int &gr_output,
                                unsigned int &time)
 {
   // Suppose the module is not SYNC
@@ -162,7 +171,7 @@ unsigned char AXI_transfer_out(unsigned int &gr_output,
     }
 
     if ((uint8_t)true == top->TVALID_OUT) {
-      gr_output = top->TDATA_OUT;
+      gr_output = (unsigned int)top->TDATA_OUT;
       out_transfer_flag = true;
     }
 
