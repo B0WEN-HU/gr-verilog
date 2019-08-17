@@ -22,8 +22,10 @@
 #include "config.h"
 #endif
 
-#include <gnuradio/io_signature.h>
+#include <gnuradio/thread/thread.h>
 #include "verilog_axi_ii_impl.h"
+#include <gnuradio/io_signature.h>
+
 
 #include "verilog/constants.h"
 
@@ -45,17 +47,20 @@
 namespace gr {
   namespace verilog {
 
+    typedef unsigned int ITYPE;
+    typedef unsigned int OTYPE;
+
     verilog_axi_ii::sptr
-    verilog_axi_ii::make(const char *filename)
+    verilog_axi_ii::make(const char *filename, unsigned int skip_output_items)
     {
       return gnuradio::get_initial_sptr
-        (new verilog_axi_ii_impl(filename));
+        (new verilog_axi_ii_impl(filename, skip_output_items));
     }
 
     /*
      * The private constructor
      */
-    verilog_axi_ii_impl::verilog_axi_ii_impl(const char *filename)
+    verilog_axi_ii_impl::verilog_axi_ii_impl(const char *filename, unsigned int skip_output_items)
       : gr::block("verilog_axi_ii",
               gr::io_signature::make(1, 1, sizeof(ITYPE)),
               gr::io_signature::make(1, 1, sizeof(OTYPE)))
@@ -64,8 +69,9 @@ namespace gr {
       std::string filename_temp(filename);
       std::size_t filename_pos = filename_temp.rfind(SLASH);
       if (std::string::npos == filename_pos) {
-        /* TODO: raise_error() */
+        GR_LOG_WARN(d_logger, "filename error!");
       }
+
       this->verilog_module_name = filename_temp.substr(filename_pos + 1);
       this->verilog_module_path = filename_temp.substr(0, filename_pos + 1);
 
@@ -76,7 +82,9 @@ namespace gr {
       // Reset the initial time
       this->main_time = 0;
 
-      
+      // Initial skip_output_items
+      this->skip_output_items = skip_output_items;
+
       /* Call Verilator (Makefile) to generate the cpp code */
       // There will be a Shell_cmd object created in the function to
       // run configure.sh
@@ -152,12 +160,12 @@ namespace gr {
     {
       const ITYPE *in = (const ITYPE *) input_items[0];
       OTYPE *out = (OTYPE *) output_items[0];
-
+     
       // Initial and Reset the module
       if (NULL == this->sim)
       {
         typedef void (*Initial_func) (void);
-        typedef void (*Reset_func) (void);
+        typedef void (*Reset_func) (unsigned int skip_n);
         
         Initial_func axi_init;
         Reset_func axi_reset;
@@ -172,14 +180,13 @@ namespace gr {
         }
 
         axi_init();
-        axi_reset();
+        axi_reset(this->skip_output_items);
 
         this->sim =
             (Simulation_func)this->verilog_module_so.find_func("AXI_async_transfer_ii");
       }
 
-      if (NULL == this->sim)
-      { std::cout << "ERROR" << std::endl; }
+
       // Do <+signal processing+>
       unsigned int input_i;
       unsigned int output_i;
@@ -195,22 +202,6 @@ namespace gr {
         if (status_code & 1) {
           ++output_i;
         }
-      }
-
-      // Dump the output
-      unsigned char dump_status = 0;
-      while (output_i < noutput_items && 0 == (dump_status & (1 << 1))) {
-        typedef unsigned char (*Dump_func)(const OTYPE &verilog_ouput, const unsigned int &main_time);
-        Dump_func axi_dump;
-        axi_dump =
-            (Dump_func)this->verilog_module_so.find_func("AXI_transfer_out_i");
-        
-        dump_status = axi_dump(out[output_i], this->main_time);
-
-        if (dump_status & 1) {
-          ++output_i;
-        }
-
       }
 
       // Tell runtime system how many input items we consumed on

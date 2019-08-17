@@ -5,12 +5,19 @@
  * This file should not be modified
  */
 #include "axi_module.h"
+#include <iostream>
 
 #define MAX_ITERATION 512 
-#define SKIP_OUTPUT 0
+#define SKIP_OUTPUT_ITEMS 0
 
-unsigned int skip_output = SKIP_OUTPUT;
-
+#define ACLK          ACLK
+#define ARESETn       ARESETn
+#define TVALID_IN     TVALID_IN
+#define TREADY_IN     TREADY_IN
+#define TVALID_OUT    TVALID_OUT
+#define TREADY_OUT    TREADY_OUT
+#define TDATA_IN      TDATA_IN
+#define TDATA_OUT     TDATA_OUT
 /*
  * AXI signals:
  * ACLK               input
@@ -23,6 +30,9 @@ unsigned int skip_output = SKIP_OUTPUT;
  * TDATA_OUT[31:0]    output
  */
 
+unsigned int skip_output_items = 0;
+
+
 void AXI_init()
 {
   int argc = 0;
@@ -32,9 +42,12 @@ void AXI_init()
   top = new Vaxi_module;
 }
 
-void AXI_reset()
+void AXI_reset(unsigned int skip_n)
 {
-  skip_output = SKIP_OUTPUT;
+  skip_output_items = skip_n > (unsigned int)SKIP_OUTPUT_ITEMS ? 
+                      skip_n : (unsigned int)SKIP_OUTPUT_ITEMS;
+  
+  std::cout << "skip_output_items" << skip_output_items << std::endl;
   top->ACLK = 0;
   top->ARESETn = 0;
   top->eval();
@@ -46,8 +59,8 @@ void AXI_reset()
 }
 
 void AXI_sync_transfer_ii(const unsigned int &gr_input,
-                  unsigned int &gr_output,
-                  unsigned int &time)
+                          unsigned int &gr_output,
+                          unsigned int &time)
 {
   // Suppose the module is SYNC
   // input:ouput => 1:1
@@ -85,8 +98,8 @@ void AXI_sync_transfer_ii(const unsigned int &gr_input,
 }
 
 unsigned char AXI_async_transfer_ii(const unsigned int &gr_input,
-                  unsigned int &gr_output,
-                  unsigned int &time)
+                                    unsigned int &gr_output,
+                                    unsigned int &time)
 {
   // Suppose the module is not SYNC
   // input:ouput != 1:1
@@ -119,8 +132,8 @@ unsigned char AXI_async_transfer_ii(const unsigned int &gr_input,
     top->eval();
 
     if ((uint8_t)true == top->TVALID_OUT) {
-      if (skip_output > 0) {
-        --skip_output;
+      if (skip_output_items > 0) {
+        --skip_output_items;
       }
       else {
         gr_output = (unsigned int)top->TDATA_OUT;
@@ -143,7 +156,7 @@ unsigned char AXI_async_transfer_ii(const unsigned int &gr_input,
 }
 
 unsigned char AXI_transfer_out_i(unsigned int &gr_output,
-                               unsigned int &time)
+                                 unsigned int &time)
 {
   // Suppose the module is not SYNC
   // input:ouput != 1:1

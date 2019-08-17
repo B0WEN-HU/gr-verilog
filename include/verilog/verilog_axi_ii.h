@@ -46,7 +46,7 @@ namespace gr {
        * class. verilog::verilog_axi_ii::make is the public interface for
        * creating new instances.
        */
-      static sptr make(const char *filename);
+      static sptr make(const char *filename, unsigned int skip_output_items);
     };
 
   } // namespace verilog

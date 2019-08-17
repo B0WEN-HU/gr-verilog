@@ -25,7 +25,6 @@
 #include <string>
 
 #include "Shared_lib.h"
-#include "gr_verilog_iotype.h"
 
 #define SLASH "/"
 
@@ -61,6 +60,8 @@ namespace gr {
 
       unsigned int main_time;
 
+      unsigned int skip_output_items;
+
       /* gr::verilog::verilog_axi_ii private member variables  */
 
 
@@ -95,7 +96,7 @@ namespace gr {
       /* gr::verilog::verilog_axi_ii private member functions */
 
      public:
-      verilog_axi_ii_impl(const char *filename);
+      verilog_axi_ii_impl(const char *filename, unsigned int skip_output_items);
       ~verilog_axi_ii_impl();
 
       // Where all the action really happens
