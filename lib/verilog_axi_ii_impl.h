@@ -93,6 +93,8 @@ namespace gr {
 
       /* Destruct routine */
 
+      void test_access(const char*filepath, const char *err_msg);
+
       /* gr::verilog::verilog_axi_ii private member functions */
 
      public:

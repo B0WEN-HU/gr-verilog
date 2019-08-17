@@ -25,6 +25,9 @@
 #include <gnuradio/thread/thread.h>
 #include "verilog_axi_ii_impl.h"
 #include <gnuradio/io_signature.h>
+#include <unistd.h>
+#include <stdexcept>
+
 
 
 #include "verilog/constants.h"
@@ -75,9 +78,19 @@ namespace gr {
       this->verilog_module_name = filename_temp.substr(filename_pos + 1);
       this->verilog_module_path = filename_temp.substr(0, filename_pos + 1);
 
+      // Test access
+      this->test_access(filename, "can't access verilog file");
+
       /* Initialize makefile_template_path and cpp_template_path */
       this->makefile_template_path = MAKEFILE_TEMPLATE_PATH;
       this->cpp_template_path = CPP_TEMPLATE_PATH;
+      // Test access
+      this->test_access((this->makefile_template_path + AXI_MODULE_CL_MAKEFILE).c_str(),
+                        "can't access makefile template");
+      this->test_access((this->cpp_template_path + CPP_TEMPLATE_NAME).c_str(),
+                         "can't access cpp template");
+      this->test_access((this->cpp_template_path + HEADER_TEMPLATE_NAME).c_str(),
+                         "can't access header template");                 
 
       // Reset the initial time
       this->main_time = 0;
@@ -279,6 +292,15 @@ namespace gr {
     verilog_axi_ii_impl::release_lib() throw(std::runtime_error)
     {
       this->verilog_module_so.close_lib();
+    }
+
+    void
+    verilog_axi_ii_impl::test_access(const char*filepath, const char *err_msg)
+    {
+      if ( access(filepath, R_OK) == _EXIT_FAILURE ) {
+        GR_LOG_ERROR(d_logger, boost::format("%s: %s") % filepath % strerror(errno));
+        throw std::runtime_error(err_msg);
+      }
     }
 
     /* gr::verilog::verilog_axi_ii private member functions */

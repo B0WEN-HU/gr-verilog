@@ -19,6 +19,7 @@
  */
 
 #include "verilog/constants.h"
+#include <gnuradio/prefs.h>
 
 namespace gr {
   namespace verilog {
@@ -29,12 +30,11 @@ namespace gr {
 
     std::string
     templatedir() {
-      /*
-      return gr::prefs::prefs().get_string("verilog",
-                                           "templatedir",
-                                           datadir());
-      */
-      return "/home/bowen/Documents/GSoC/gr-verilog-axi-general/templates/";
+      
+      return gr::prefs().get_string("verilog",
+                                    "templatedir",
+                                    datadir());
+      
     }
   }
 } //namespace gr::verilog

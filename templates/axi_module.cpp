@@ -47,7 +47,6 @@ void AXI_reset(unsigned int skip_n)
   skip_output_items = skip_n > (unsigned int)SKIP_OUTPUT_ITEMS ? 
                       skip_n : (unsigned int)SKIP_OUTPUT_ITEMS;
   
-  std::cout << "skip_output_items" << skip_output_items << std::endl;
   top->ACLK = 0;
   top->ARESETn = 0;
   top->eval();
