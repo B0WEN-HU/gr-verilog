@@ -39,7 +39,8 @@ void AXI_init()
   char** argv = NULL;
   Verilated::commandArgs(argc, argv);
 
-  top = new Vaxi_module;
+  if (NULL == top)
+    top = new Vaxi_module;
 }
 
 void AXI_reset(unsigned int skip_n)
@@ -57,6 +58,7 @@ void AXI_reset(unsigned int skip_n)
   top->eval();
 }
 
+/* Deprecated
 void AXI_sync_transfer_ii(const unsigned int &gr_input,
                           unsigned int &gr_output,
                           unsigned int &time)
@@ -95,6 +97,7 @@ void AXI_sync_transfer_ii(const unsigned int &gr_input,
 
   time += cycle_tmp;
 }
+*/
 
 unsigned char AXI_async_transfer_ii(const unsigned int &gr_input,
                                     unsigned int &gr_output,
@@ -216,5 +219,9 @@ void AXI_nop()
 void AXI_close()
 {
   top->final();
-  delete top;
+  if (top != NULL)
+  {
+    delete top;
+    top = NULL;
+  }
 }

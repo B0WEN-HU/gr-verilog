@@ -25,12 +25,10 @@
 #include <cstdio>
 #include <string>
 
-#include "gr_verilog_iotype.h"
-
 namespace gr {
   namespace verilog {
 
-    typedef void (*func_ptr)(const ITYPE &, OTYPE &, unsigned &time);
+    typedef void (*func_ptr)(void);
 
 #ifdef __linux
     class Shared_lib

@@ -25,8 +25,6 @@
 namespace gr {
   namespace verilog {
 
-    typedef unsigned int ITYPE;
-    typedef unsigned int OTYPE;
 
   } // namespace verilog
 } // namespace gr

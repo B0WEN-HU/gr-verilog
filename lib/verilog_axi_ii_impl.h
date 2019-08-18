@@ -35,6 +35,8 @@ namespace gr {
     {
      private:
       /* gr::verilog::verilog_axi_ii private member variables  */
+      typedef unsigned int ITYPE;
+      typedef unsigned int OTYPE;
       
       // The path and name of user's verilog module
       // Construct by (const char *filename)
@@ -62,6 +64,8 @@ namespace gr {
 
       unsigned int skip_output_items;
 
+      boost::mutex vl_mutex;
+
       /* gr::verilog::verilog_axi_ii private member variables  */
 
 
@@ -80,20 +84,22 @@ namespace gr {
       // The function that call g++ (Makefile) to generate the shared library
       // There might be some modifications on the tempalte cpp interface file
       // ! generate_verilator_file will be included in the this->generate_so()
-      int generate_so() throw(std::runtime_error);
+      int generate_so();
 
       // The function that load the shared library that generated above
       // with the Shared_lib verilog_module_so
-      int load_lib() throw(std::runtime_error);
+      int load_lib();
       /* Construct routine */
 
       /* Destruct routine */
 
-      int release_lib() throw(std::runtime_error);
+      int release_lib();
 
       /* Destruct routine */
 
-      void test_access(const char*filepath, const char *err_msg);
+      bool test_access(const char *filepath, const char *err_msg);
+
+      bool check_env(const char *package, const char *err_msg);
 
       /* gr::verilog::verilog_axi_ii private member functions */
 

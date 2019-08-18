@@ -1,14 +1,14 @@
 #pragma once
 
-# include "Vaxi_module.h"
-# include "verilated.h"
+#include "Vaxi_module.h"
+#include "verilated.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-static Vaxi_module* top;
+static Vaxi_module* top = NULL;
 
 void AXI_init();
 

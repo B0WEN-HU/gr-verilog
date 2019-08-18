@@ -50,9 +50,6 @@
 namespace gr {
   namespace verilog {
 
-    typedef unsigned int ITYPE;
-    typedef unsigned int OTYPE;
-
     verilog_axi_ii::sptr
     verilog_axi_ii::make(const char *filename, unsigned int skip_output_items)
     {
@@ -72,7 +69,7 @@ namespace gr {
       std::string filename_temp(filename);
       std::size_t filename_pos = filename_temp.rfind(SLASH);
       if (std::string::npos == filename_pos) {
-        GR_LOG_WARN(d_logger, "filename error!");
+        GR_LOG_WARN(d_logger, "filename error");
       }
 
       this->verilog_module_name = filename_temp.substr(filename_pos + 1);
@@ -104,6 +101,11 @@ namespace gr {
       // configure.sh will copy the makefile template and modify it
       // for the verilog module
       // the Shell_cmd will run make at the verilog module path
+
+      // Check enviroments : make, g++, verilator
+      this->check_env("make", "can't find make");
+      this->check_env("g++", "can't find g++");
+      this->check_env("verilator", "can't find verilator");
       
       //try {
       //  this->generate_verilator_file();
@@ -116,9 +118,16 @@ namespace gr {
       // run make at the verilog module path
       // ! generate_verilator_file will be included in the this->generate_so()
       try {
+        // obtain exclusive access for duration of generate_so()
+        gr::thread::scoped_lock lock(this->vl_mutex);
+
         this->generate_so();
-      } catch (...) {
-        /* TODO: Handle the error */
+      } catch (std::runtime_error) {
+        GR_LOG_ERROR(d_logger,
+                     boost::format("%s: %s")
+                     % this->verilog_module_path.c_str()
+                     % strerror(errno));
+        throw;
       }
 
       /* Load the shared library that generated above */
@@ -131,10 +140,16 @@ namespace gr {
       // general_sim() could accept input and output of all port with
       // the help of port map stored in the verilog_data
       try {
-        this->load_lib();
+        // obtain exclusive access for duration of load_lib()
+        gr::thread::scoped_lock lock(this->vl_mutex);
 
-      } catch (...) {
-        /* TODO: Handle the error */
+        this->load_lib();
+      } catch (std::runtime_error) {
+        GR_LOG_ERROR(d_logger,
+                     boost::format("%s: %s")
+                     % this->verilog_module_path.c_str()
+                     % strerror(errno));
+        throw;
       }
 
       /* Initialize sim */
@@ -146,15 +161,15 @@ namespace gr {
      */
     verilog_axi_ii_impl::~verilog_axi_ii_impl()
     {
-      // Dump the output
+      // There should not be any errors in destructor
+      typedef void (*Close_func) (void);
+      Close_func axi_close;
+      axi_close =
+            (Close_func)this->verilog_module_so.find_func("AXI_close");
+      if (axi_close != NULL)
+        axi_close();
 
-
-      /* Release the shared library */
-      try {
-        this->release_lib();
-      } catch (...) {
-        /* TODO: Handle the error */
-      }
+      this->release_lib();
     }
 
     void
@@ -189,6 +204,7 @@ namespace gr {
             (Reset_func)this->verilog_module_so.find_func("AXI_reset");
 
         if ((NULL == axi_init) or (NULL == axi_reset)) {
+          throw std::runtime_error("can't find correct AXI_init or AXI_reset in shared library");
           return _EXIT_FAILURE;
         }
 
@@ -197,6 +213,11 @@ namespace gr {
 
         this->sim =
             (Simulation_func)this->verilog_module_so.find_func("AXI_async_transfer_ii");
+
+        if (NULL == this->sim) {
+          throw std::runtime_error("can't find correct AXI_async_transfer_ii in shared library");
+          return _EXIT_FAILURE;
+        }
       }
 
 
@@ -229,7 +250,7 @@ namespace gr {
     /* gr::verilog::verilog_axi_ii private member functions */
 
     int
-    verilog_axi_ii_impl::generate_so() throw(std::runtime_error)
+    verilog_axi_ii_impl::generate_so()
     {
       // const char
       const std::string ENTER = "\n";
@@ -267,40 +288,77 @@ namespace gr {
       cmd += ENTER;
 
       cmd += ENTER;
-      bash.exec(cmd.c_str());
-      // TODO: FIX: check and handle the error
-      // if (error) { cl_err_code = -1; }
+
+      try {
+        cl_err_code = bash.exec(cmd.c_str());
+        if (cl_err_code == _EXIT_FAILURE) {
+          throw std::runtime_error("Shell_cmd execute error");
+        }
+      }
+      catch (...) {
+        bash.print_msg(std::cerr);
+        throw;
+      }
 
       return cl_err_code;
     }
 
     int
-    verilog_axi_ii_impl::load_lib() throw(std::runtime_error)
+    verilog_axi_ii_impl::load_lib()
     {
       int lib_err_code;
       lib_err_code = 
         this->verilog_module_so.load_lib((this->verilog_module_path + M_dir).c_str(),
                                          SHARED_LIB_NAME);
-      if (-1 == lib_err_code) {
-        // TODO: throw(std::runtime_error);
+      if (lib_err_code == _EXIT_FAILURE) {
+        throw std::runtime_error("can't load shared library");
       }
 
       return lib_err_code;
     }
 
     int
-    verilog_axi_ii_impl::release_lib() throw(std::runtime_error)
+    verilog_axi_ii_impl::release_lib()
     {
       this->verilog_module_so.close_lib();
     }
 
-    void
-    verilog_axi_ii_impl::test_access(const char*filepath, const char *err_msg)
+    bool
+    verilog_axi_ii_impl::test_access(const char*filepath, const char *err_msg = "")
     {
       if ( access(filepath, R_OK) == _EXIT_FAILURE ) {
-        GR_LOG_ERROR(d_logger, boost::format("%s: %s") % filepath % strerror(errno));
-        throw std::runtime_error(err_msg);
+        if (err_msg != "") {
+          GR_LOG_ERROR(d_logger,
+                       boost::format("%s: %s")
+                       % filepath
+                       % strerror(errno));
+          throw std::runtime_error(err_msg);
+        }
+        
+        return false;
       }
+      
+      return true;
+    }
+
+    bool
+    verilog_axi_ii_impl::check_env(const char *package, const char *err_msg = "")
+    {
+      Shell_cmd bash;
+      bash.exec((std::string("which ") + package).c_str());
+      if (bash.get_msg(0) == "") {
+        if (err_msg != "") {
+          GR_LOG_ERROR(d_logger,
+                       boost::format("%s: %s")
+                       % package
+                       % strerror(errno));
+          throw std::runtime_error(err_msg);
+        }
+
+        return false;
+      }
+
+      return true;
     }
 
     /* gr::verilog::verilog_axi_ii private member functions */

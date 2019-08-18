@@ -49,6 +49,10 @@ namespace gr {
       // It will return the line number of message if exit normally
       int exec(const char *cmd);
       
+      // The get_msg() function of the class
+      // It will return msg (i-th line, from 0)
+      std::string get_msg(unsigned int i);
+
       // The print_msg() function
       // It print out the message that stored in msgvec
       void print_msg(std::ostream &out);

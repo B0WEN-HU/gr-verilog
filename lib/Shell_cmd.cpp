@@ -68,6 +68,15 @@ namespace gr {
       return this->msgvec.size();
     }
 
+    // The get_msg() function
+    std::string Shell_cmd::get_msg(unsigned int i)
+    {
+      if (msgvec.size() < (i + 1))
+        return "";
+      else
+        return msgvec[i];
+    }
+
     
     // The print_msg(std::ostream &out) function
     void Shell_cmd::print_msg(std::ostream &out)
