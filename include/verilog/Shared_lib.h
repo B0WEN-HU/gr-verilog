@@ -1,18 +1,18 @@
 
 /* -*- c++ -*- */
-/* 
+/*
  * Copyright 2019 <+YOU OR YOUR COMPANY+>.
- * 
+ *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3, or (at your option)
  * any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this software; see the file COPYING.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street,
@@ -35,12 +35,12 @@ namespace gr {
     {
      private:
       // Private members
-      
+
       // The path and name of the library
       std::string lib_name;
       std::string lib_path;
 
-      // The hanle of the shared library 
+      // The hanle of the shared library
       void *lib_handle;
 
       // The status of the shared library
@@ -65,7 +65,7 @@ namespace gr {
       // The function that close the library
       void close_lib(void);
 
-      // DEBUG 
+      // DEBUG
       std::string get_lib_path() const;
       std::string get_lib_name() const;
       std::string get_lib_status() const;

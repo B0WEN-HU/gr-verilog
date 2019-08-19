@@ -1,23 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# 
+#
 # Copyright 2019 <+YOU OR YOUR COMPANY+>.
-# 
+#
 # This is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
-# 
+#
 # This software is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this software; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
-# 
+#
 
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
@@ -38,7 +38,7 @@ class qa_verilog_axi_ii (gr_unittest.TestCase):
         src = blocks.vector_source_i(src_data)
         vl = verilog.verilog_axi_ii("/home/bowen/Downloads/temp/saxi_passthru.v", True, 1.0, "-Wall", 0)
         dst = blocks.vector_sink_i()
-        
+
         self.tb.connect(src, vl)
         self.tb.connect(vl, dst)
         self.tb.run()
@@ -47,7 +47,7 @@ class qa_verilog_axi_ii (gr_unittest.TestCase):
         print (expected_result)
         print (result_data)
         self.assertFloatTuplesAlmostEqual(expected_result, result_data, 9)
-        
+
     def test_002_t (self):
         # set up fg
         src_data = (1, 3, 5, 9, 10, 12, 17, 19, 21)
@@ -55,7 +55,7 @@ class qa_verilog_axi_ii (gr_unittest.TestCase):
         src = blocks.vector_source_i(src_data)
         vl = verilog.verilog_axi_ii("/home/bowen/Downloads/double/double_axi.v", True, 1.0, "", 0)
         dst = blocks.vector_sink_i()
-        
+
         self.tb.connect(src, vl)
         self.tb.connect(vl, dst)
         self.tb.run()

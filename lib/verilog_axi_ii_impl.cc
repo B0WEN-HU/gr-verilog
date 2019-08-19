@@ -1,17 +1,17 @@
 /* -*- c++ -*- */
-/* 
+/*
  * Copyright 2019 <+YOU OR YOUR COMPANY+>.
- * 
+ *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3, or (at your option)
  * any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this software; see the file COPYING.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street,
@@ -90,7 +90,7 @@ namespace gr {
       this->test_access((this->cpp_template_path + CPP_TEMPLATE_NAME).c_str(),
                          "can't access cpp template");
       this->test_access((this->cpp_template_path + HEADER_TEMPLATE_NAME).c_str(),
-                         "can't access header template");                 
+                         "can't access header template");
 
       // Reset the initial time
       this->main_time = 0;
@@ -118,7 +118,7 @@ namespace gr {
       this->check_env("make", "can't find make");
       this->check_env("g++", "can't find g++");
       this->check_env("verilator", "can't find verilator");
-      
+
       //try {
       //  this->generate_verilator_file();
       //} catch (...) {
@@ -199,13 +199,13 @@ namespace gr {
     {
       const ITYPE *in = (const ITYPE *) input_items[0];
       OTYPE *out = (OTYPE *) output_items[0];
-     
+
       // Initial and Reset the module
       if (NULL == this->sim)
       {
         typedef void (*Initial_func) (void);
         typedef void (*Reset_func) (unsigned int skip_n);
-        
+
         Initial_func axi_init;
         Reset_func axi_reset;
 
@@ -266,7 +266,7 @@ namespace gr {
       return output_i;
     }
 
-    
+
     /* gr::verilog::verilog_axi_ii private member functions */
 
     int
@@ -282,7 +282,7 @@ namespace gr {
       // Shell_cmd class
       Shell_cmd bash;
       std::string cmd = "";
-      
+
       // $ cd ${verilog_module_path}
       cmd += "cd ";
       cmd += this->verilog_module_path;
@@ -321,7 +321,7 @@ namespace gr {
 
           if (!CL_makefile_flag)
             cmd += std::string(" ") + this->makefile_template_path + AXI_MODULE_CL_MAKEFILE;
-          
+
           if (!CPP_flag) {
             cmd += std::string(" ") + this->cpp_template_path + CPP_TEMPLATE_NAME;
             cmd += std::string(" ") + this->cpp_template_path + HEADER_TEMPLATE_NAME;
@@ -330,7 +330,7 @@ namespace gr {
           cmd += ENTER;
         }
       } */
-      
+
 
       // $ make -j -f axi_module_cl.mk \
       //   USER_VL_FILENAME=user_module_name.v \
@@ -364,7 +364,7 @@ namespace gr {
     verilog_axi_ii_impl::load_lib()
     {
       int lib_err_code;
-      lib_err_code = 
+      lib_err_code =
         this->verilog_module_so.load_lib((this->verilog_module_path + M_dir).c_str(),
                                          SHARED_LIB_NAME);
       if (lib_err_code == _EXIT_FAILURE) {
@@ -392,7 +392,7 @@ namespace gr {
                        % strerror(errno));
           throw std::runtime_error(err_msg);
         }
-        
+
         return false;
       }
 

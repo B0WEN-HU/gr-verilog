@@ -1,17 +1,17 @@
 /* -*- c++ -*- */
-/* 
+/*
  * Copyright 2019 <+YOU OR YOUR COMPANY+>.
- * 
+ *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3, or (at your option)
  * any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this software; see the file COPYING.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street,
@@ -46,7 +46,7 @@ namespace gr {
     // The load_lib function of the class
     int Shared_lib::load_lib(const char *ext_lib_path, const char *ext_lib_name)
     {
-      // Get the the fullname of the shared library      
+      // Get the the fullname of the shared library
       std::string lib_fullname = ext_lib_path;
       // Check the slash at the end of the path
       if (SLASH == lib_fullname.back()) {
@@ -63,8 +63,8 @@ namespace gr {
 
         lib_fullname += ext_lib_name;
       }
-      
-      
+
+
       // Open the shared library
       this->lib_handle = dlopen(lib_fullname.c_str(), RTLD_LAZY);
       // If the library was not loaded
