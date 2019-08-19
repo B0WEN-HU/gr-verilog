@@ -32,8 +32,8 @@
 
 #include "verilog/constants.h"
 
-#include "Shell_cmd.h"
-#include "Shared_lib.h"
+#include "verilog/Shell_cmd.h"
+#include "verilog/Shared_lib.h"
 
 #define AXI_MODULE_CL_MAKEFILE "axi_module_cl.mk"
 #define CPP_TEMPLATE_NAME "axi_module.cpp"

@@ -22,7 +22,7 @@
 #include <dlfcn.h>
 #include <cstring>
 #include <string>
-#include "Shared_lib.h"
+#include "verilog/Shared_lib.h"
 
 #define SLASH '/'
 #define _EXIT_FAILURE -1
