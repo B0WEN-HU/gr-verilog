@@ -51,16 +51,19 @@ namespace gr {
   namespace verilog {
 
     verilog_axi_ii::sptr
-    verilog_axi_ii::make(const char *filename, unsigned int skip_output_items)
+    verilog_axi_ii::make(const char *filename, bool overwrite, float IO_ratio,
+                         const char *verilator_options, unsigned int skip_output_items)
     {
       return gnuradio::get_initial_sptr
-        (new verilog_axi_ii_impl(filename, skip_output_items));
+        (new verilog_axi_ii_impl(filename, overwrite, IO_ratio,
+                                 verilator_options, skip_output_items));
     }
 
     /*
      * The private constructor
      */
-    verilog_axi_ii_impl::verilog_axi_ii_impl(const char *filename, unsigned int skip_output_items)
+    verilog_axi_ii_impl::verilog_axi_ii_impl(const char *filename, bool overwrite, float IO_ratio,
+                                             const char *verilator_options, unsigned int skip_output_items)
       : gr::block("verilog_axi_ii",
               gr::io_signature::make(1, 1, sizeof(ITYPE)),
               gr::io_signature::make(1, 1, sizeof(OTYPE)))
@@ -95,6 +98,15 @@ namespace gr {
       // Initial skip_output_items
       this->skip_output_items = skip_output_items;
 
+      // Set overwrite
+      this->overwrite = overwrite;
+
+      // Set IO_ratio
+      this->IO_ratio = IO_ratio;
+
+      // Set verilator options
+      this->verilator_options = verilator_options;
+
       /* Call Verilator (Makefile) to generate the cpp code */
       // There will be a Shell_cmd object created in the function to
       // run configure.sh
@@ -110,7 +122,7 @@ namespace gr {
       //try {
       //  this->generate_verilator_file();
       //} catch (...) {
-      //  /* TODO: Handle the error */
+      //
       //}
 
       /* Generate shared library and initialize verilog_module_so */
@@ -176,8 +188,7 @@ namespace gr {
     verilog_axi_ii_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
     {
       /* <+forecast+> e.g. ninput_items_required[0] = noutput_items */
-      // TODO: FIX: DO THE RIGHT FORECAST
-      ninput_items_required[0] = noutput_items;
+      ninput_items_required[0] = (int) round(IO_ratio * noutput_items);
     }
 
     int
@@ -227,9 +238,18 @@ namespace gr {
       for (input_i = 0, output_i = 0; output_i < noutput_items && input_i < ninput_items[0];)
       {
         unsigned char status_code;
-        status_code =
-            this->sim(in[input_i], out[output_i], this->main_time);
-        
+
+        try {
+          status_code =
+              this->sim(in[input_i], out[output_i], this->main_time);
+        } catch (std::runtime_error) {
+          GR_LOG_ERROR(d_logger,
+                     boost::format("%s: %s")
+                     % this->verilog_module_path.c_str()
+                     % strerror(errno));
+          throw;
+        }
+
         if (status_code & (1 << 1)) {
           ++input_i;
         }
@@ -270,12 +290,47 @@ namespace gr {
 
       // $ cp ${makefile_template_path}/axi_module_cl.mk ${verilog_module_path}
       // #define AXI_MODULE_CL_MAKEFILE "axi_module_cl.mk"
-      cmd += "cp -n ";
-      cmd += this->makefile_template_path + AXI_MODULE_CL_MAKEFILE;
+      cmd += "cp ";
+      if (!this->overwrite)
+        cmd += "-n";
+      cmd += std::string(" ") + this->makefile_template_path + AXI_MODULE_CL_MAKEFILE;
       cmd += std::string(" ") + this->makefile_template_path + CPP_TEMPLATE_NAME;
       cmd += std::string(" ") + this->makefile_template_path + HEADER_TEMPLATE_NAME;
       cmd += std::string(" ") + this->verilog_module_path;
       cmd += ENTER;
+      /* alternative solution:
+      if (this->overwrite) {
+        cmd += "cp";
+        cmd += std::string(" ") + this->makefile_template_path + AXI_MODULE_CL_MAKEFILE;
+        cmd += std::string(" ") + this->cpp_template_path + CPP_TEMPLATE_NAME;
+        cmd += std::string(" ") + this->cpp_template_path + HEADER_TEMPLATE_NAME;
+        cmd += std::string(" ") + this->verilog_module_path;
+        cmd += ENTER;
+      }
+      else {
+        std::string CL_makefile_user_filename =
+            (this->verilog_module_path + AXI_MODULE_CL_MAKEFILE);
+        std::string CPP_user_filename =
+            (this->verilog_module_path + CPP_TEMPLATE_NAME).c_str();
+
+        bool CL_makefile_flag = this->test_access(CL_makefile_user_filename.c_str(), "");
+        bool CPP_flag = this->test_access(CPP_user_filename.c_str(), "");
+
+        if (!CL_makefile_flag || !CPP_flag) {
+          cmd += "cp ";
+
+          if (!CL_makefile_flag)
+            cmd += std::string(" ") + this->makefile_template_path + AXI_MODULE_CL_MAKEFILE;
+          
+          if (!CPP_flag) {
+            cmd += std::string(" ") + this->cpp_template_path + CPP_TEMPLATE_NAME;
+            cmd += std::string(" ") + this->cpp_template_path + HEADER_TEMPLATE_NAME;
+          }
+          cmd += std::string(" ") + this->verilog_module_path;
+          cmd += ENTER;
+        }
+      } */
+      
 
       // $ make -j -f axi_module_cl.mk \
       //   USER_VL_FILENAME=user_module_name.v \
@@ -285,6 +340,8 @@ namespace gr {
       cmd += std::string(" ") + "USER_VL_FILENAME=" + this->verilog_module_name;
       cmd += std::string(" ") + "USER_CPP_FILENAME=" + CPP_TEMPLATE_NAME;
       cmd += std::string(" ") + " M_DIR=" + M_dir;
+      // cmd += verilator_options:
+      cmd += std::string(" ") + "VERILATOR_OPTIONS=" + this->verilator_options;
       cmd += ENTER;
 
       cmd += ENTER;
@@ -324,8 +381,9 @@ namespace gr {
     }
 
     bool
-    verilog_axi_ii_impl::test_access(const char*filepath, const char *err_msg = "")
+    verilog_axi_ii_impl::test_access(const char *filepath, const char *err_msg = "")
     {
+
       if ( access(filepath, R_OK) == _EXIT_FAILURE ) {
         if (err_msg != "") {
           GR_LOG_ERROR(d_logger,
@@ -337,13 +395,14 @@ namespace gr {
         
         return false;
       }
-      
+
       return true;
     }
 
     bool
     verilog_axi_ii_impl::check_env(const char *package, const char *err_msg = "")
     {
+
       Shell_cmd bash;
       bash.exec((std::string("which ") + package).c_str());
       if (bash.get_msg(0) == "") {
@@ -365,4 +424,3 @@ namespace gr {
 
   } /* namespace verilog */
 } /* namespace gr */
-

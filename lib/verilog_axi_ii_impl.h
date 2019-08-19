@@ -64,7 +64,16 @@ namespace gr {
 
       unsigned int skip_output_items;
 
+      // overwrite user templates in the path
+      bool overwrite;
+
+      // used for forecast
+      float IO_ratio;
+
+      // thread safe
       boost::mutex vl_mutex;
+
+      std::string verilator_options;
 
       /* gr::verilog::verilog_axi_ii private member variables  */
 
@@ -104,7 +113,8 @@ namespace gr {
       /* gr::verilog::verilog_axi_ii private member functions */
 
      public:
-      verilog_axi_ii_impl(const char *filename, unsigned int skip_output_items);
+      verilog_axi_ii_impl(const char *filename, bool overwrite, float IO_ratio,
+                          const char *verilator_options, unsigned int skip_output_items);
       ~verilog_axi_ii_impl();
 
       // Where all the action really happens

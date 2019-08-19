@@ -27,11 +27,13 @@ endif
 USER_VL_FILENAME =
 USER_CPP_FILENAME =
 M_DIR =
+VERILATEOR_OPTIONS =
 
 VM_PREFIX = Vaxi_module
 
-
 VERILATOR_FLAGS =
+# Options from block
+VERILATOR_FLAGS += $(VERILATEOR_OPTIONS)
 # Generate -fPIC code for shared library
 VERILATOR_FLAGS += -CFLAGS -fPIC
 # Change the module to fixed name
@@ -40,7 +42,7 @@ VERILATOR_FLAGS += --prefix $(VM_PREFIX)
 VERILATOR_FLAGS += -cc --exe
 VERILATOR_FLAGS += -o lib_axi_module.so
 # Warn abount lint issues; may not want this on less solid designs
-VERILATOR_FLAGS += -Wall
+# VERILATOR_FLAGS += -Wall
 
 
 ######################################################################
