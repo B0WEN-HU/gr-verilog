@@ -1,38 +1,63 @@
-<?xml version="1.0"?>
 <block>
-  <name>verilog_axi_ii</name>
-  <key>verilog_verilog_axi_ii</key>
-  <category>[verilog]</category>
+  <name>Verilog AXI</name>
+  <key>verilog_axi_ii</key>
+  <category>[Verilog]</category>
   <import>import verilog</import>
-  <make>verilog.verilog_axi_ii($*filename)</make>
-  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
-       Sub-nodes:
-       * name
-       * key (makes the value accessible as $keyname, e.g. in the make node)
-       * type -->
+  <make>verilog.verilog_axi_$(type.fcn)($file, $overwrite, $IO_ratio, $verilator_options, $skip_output_items)</make>
   <param>
-    <name>...</name>
-    <key>...</key>
-    <type>...</type>
+    <name>Verilog File</name>
+    <key>file</key>
+    <value/>
+    <type>file_open</type>
   </param>
-
-  <!-- Make one 'sink' node per input. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
+  <param>
+    <name>IO Type</name>
+    <key>type</key>
+    <type>enum</type>
+    <option>
+      <name>Int</name>
+      <key>int</key>
+      <opt>fcn:ii</opt>
+    </option>
+  </param>
+  <param>
+    <name>Overwrite</name>
+    <key>overwrite</key>
+    <value>False</value>
+    <type>enum</type>
+    <option>
+      <name>Yes</name>
+      <key>True</key>
+    </option>
+    <option>
+      <name>No</name>
+      <key>False</key>
+    </option>
+  </param>
+  <param>
+    <name>IO Ratio</name>
+    <key>IO_ratio</key>
+    <value>1.0</value>
+    <type>float</type>
+  </param>
+  <param>
+    <name>Verilator Options</name>
+    <key>verilator_options</key>
+    <value/>
+    <type>string</type>
+  </param>
+  <param>
+    <name>Skip Output</name>
+    <key>skip_output_items</key>
+    <value>0</value>
+    <type>int</type>
+  </param>
   <sink>
     <name>in</name>
-    <type><!-- e.g. int, float, complex, byte, short, xxx_vector, ...--></type>
+    <type>$type</type>
   </sink>
-
-  <!-- Make one 'source' node per output. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
   <source>
     <name>out</name>
-    <type><!-- e.g. int, float, complex, byte, short, xxx_vector, ...--></type>
+    <type>$type</type>
   </source>
 </block>

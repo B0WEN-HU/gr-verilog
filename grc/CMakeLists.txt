@@ -19,4 +19,5 @@
 
 install(FILES
     verilog_verilog_axi_ii.xml DESTINATION share/gnuradio/grc/blocks
+    # verilog_verilog_axi_ii.yml DESTINATION share/gnuradio/grc/blocks
 )

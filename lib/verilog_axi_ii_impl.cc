@@ -105,7 +105,7 @@ namespace gr {
       this->IO_ratio = IO_ratio;
 
       // Set verilator options
-      this->verilator_options = verilator_options;
+      this->verilator_options = std::string(verilator_options);
 
       /* Call Verilator (Makefile) to generate the cpp code */
       // There will be a Shell_cmd object created in the function to

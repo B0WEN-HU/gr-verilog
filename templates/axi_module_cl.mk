@@ -27,13 +27,13 @@ endif
 USER_VL_FILENAME =
 USER_CPP_FILENAME =
 M_DIR =
-VERILATEOR_OPTIONS =
+VERILATOR_OPTIONS =
 
 VM_PREFIX = Vaxi_module
 
 VERILATOR_FLAGS =
 # Options from block
-VERILATOR_FLAGS += $(VERILATEOR_OPTIONS)
+VERILATOR_FLAGS += $(VERILATOR_OPTIONS)
 # Generate -fPIC code for shared library
 VERILATOR_FLAGS += -CFLAGS -fPIC
 # Change the module to fixed name
