@@ -27,6 +27,10 @@ parameters:
     label: Verilator Options
     dtype: string
     default: '""'
+-   id: module_flag
+    label: Module Flag
+    dtype: int
+    default: '0'
 -   id: skip_output_items
     label: Skip Output
     dtype: int
@@ -42,7 +46,7 @@ outputs:
 
 templates:
     imports: import verilog
-    make: verilog.verilog_verilog_axi_${type.fcn}(${file}, ${overwrite}, ${IO_ratio}, ${verilator_options}, ${skip_output_items})
+    make: verilog.verilog_verilog_axi_${type.fcn}(${file}, ${overwrite}, ${IO_ratio}, ${verilator_options}, ${module_flag}, ${skip_output_items})
 
 
 file_format: 1

@@ -47,7 +47,8 @@ namespace gr {
        * creating new instances.
        */
       static sptr make(const char *filename, bool overwrite, float IO_ratio,
-                       const char *verilator_options, unsigned int skip_output_items);
+                       const char *verilator_options, unsigned int module_flag,
+                       unsigned int skip_output_items);
     };
 
   } // namespace verilog

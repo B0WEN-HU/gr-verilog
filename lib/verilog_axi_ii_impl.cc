@@ -52,18 +52,19 @@ namespace gr {
 
     verilog_axi_ii::sptr
     verilog_axi_ii::make(const char *filename, bool overwrite, float IO_ratio,
-                         const char *verilator_options, unsigned int skip_output_items)
+                         const char *verilator_options, unsigned int module_flag, unsigned int skip_output_items)
     {
       return gnuradio::get_initial_sptr
         (new verilog_axi_ii_impl(filename, overwrite, IO_ratio,
-                                 verilator_options, skip_output_items));
+                                 verilator_options, module_flag, skip_output_items));
     }
 
     /*
      * The private constructor
      */
     verilog_axi_ii_impl::verilog_axi_ii_impl(const char *filename, bool overwrite, float IO_ratio,
-                                             const char *verilator_options, unsigned int skip_output_items)
+                                             const char *verilator_options, unsigned int module_flag,
+                                             unsigned int skip_output_items)
       : gr::block("verilog_axi_ii",
               gr::io_signature::make(1, 1, sizeof(ITYPE)),
               gr::io_signature::make(1, 1, sizeof(OTYPE)))
@@ -79,18 +80,23 @@ namespace gr {
       this->verilog_module_path = filename_temp.substr(0, filename_pos + 1);
 
       // Test access
-      this->test_access(filename, "can't access verilog file");
+      this->test_access(filename,
+                        (std::string("\ncan't access verilog file in: ") +
+                         this->verilog_module_path).c_str());
 
       /* Initialize makefile_template_path and cpp_template_path */
       this->makefile_template_path = MAKEFILE_TEMPLATE_PATH;
       this->cpp_template_path = CPP_TEMPLATE_PATH;
       // Test access
       this->test_access((this->makefile_template_path + AXI_MODULE_CL_MAKEFILE).c_str(),
-                        "can't access makefile template");
+                        (std::string("\ncan't access makefile template in: ") +
+                         this->makefile_template_path).c_str());
       this->test_access((this->cpp_template_path + CPP_TEMPLATE_NAME).c_str(),
-                         "can't access cpp template");
+                        (std::string("\ncan't access cpp template in: ") +
+                         this->cpp_template_path).c_str());
       this->test_access((this->cpp_template_path + HEADER_TEMPLATE_NAME).c_str(),
-                         "can't access header template");
+                        (std::string("\ncan't access header template in: ") +
+                         this->cpp_template_path).c_str());
 
       // Reset the initial time
       this->main_time = 0;
@@ -106,6 +112,9 @@ namespace gr {
 
       // Set verilator options
       this->verilator_options = std::string(verilator_options);
+
+      // Set module_flag
+      this->module_flag = module_flag;
 
       /* Call Verilator (Makefile) to generate the cpp code */
       // There will be a Shell_cmd object created in the function to
@@ -220,7 +229,7 @@ namespace gr {
         }
 
         axi_init();
-        axi_reset(this->skip_output_items);
+        axi_reset(this->module_flag);
 
         this->sim =
             (Simulation_func)this->verilog_module_so.find_func("AXI_async_transfer_ii");
@@ -250,11 +259,16 @@ namespace gr {
           throw;
         }
 
+        // input
         if (status_code & (1 << 1)) {
           ++input_i;
         }
+        // output
         if (status_code & 1) {
-          ++output_i;
+          if (this->skip_output_items > 0)
+            --this->skip_output_items;
+          else
+            ++output_i;
         }
       }
 
@@ -351,6 +365,9 @@ namespace gr {
         if (cl_err_code == _EXIT_FAILURE) {
           throw std::runtime_error("Shell_cmd execute error");
         }
+
+        // Output the message
+        // bash.print_msg(std::cout);
       }
       catch (...) {
         bash.print_msg(std::cerr);

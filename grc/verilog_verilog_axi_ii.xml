@@ -3,7 +3,7 @@
   <key>verilog_axi_ii</key>
   <category>[Verilog]</category>
   <import>import verilog</import>
-  <make>verilog.verilog_axi_$(type.fcn)($file, $overwrite, $IO_ratio, $verilator_options, $skip_output_items)</make>
+  <make>verilog.verilog_axi_$(type.fcn)($file, $overwrite, $IO_ratio, $verilator_options, $module_flag, $skip_output_items)</make>
   <param>
     <name>Verilog File</name>
     <key>file</key>
@@ -45,6 +45,12 @@
     <key>verilator_options</key>
     <value/>
     <type>string</type>
+  </param>
+  <param>
+    <name>Module Flag</name>
+    <key>module_flag</key>
+    <value>0</value>
+    <type>int</type>
   </param>
   <param>
     <name>Skip Output</name>

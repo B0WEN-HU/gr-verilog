@@ -75,6 +75,10 @@ namespace gr {
 
       std::string verilator_options;
 
+      // the parameter send to the template cpp code in function reset(unsiged int)
+      // user can make use of it
+      unsigned int module_flag;
+
       /* gr::verilog::verilog_axi_ii private member variables  */
 
 
@@ -114,7 +118,8 @@ namespace gr {
 
      public:
       verilog_axi_ii_impl(const char *filename, bool overwrite, float IO_ratio,
-                          const char *verilator_options, unsigned int skip_output_items);
+                          const char *verilator_options, unsigned int module_flag,
+                          unsigned int skip_output_items);
       ~verilog_axi_ii_impl();
 
       // Where all the action really happens

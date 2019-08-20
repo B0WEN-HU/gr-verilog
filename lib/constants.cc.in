@@ -25,7 +25,7 @@ namespace gr {
   namespace verilog {
     const std::string
     datadir() {
-      return "@GR_PKG_DATA_DIR@";
+      return "@CMAKE_INSTALL_PREFIX@/@GR_PKG_DATA_DIR@/templates/";
     }
 
     std::string

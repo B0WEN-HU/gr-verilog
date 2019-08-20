@@ -39,15 +39,14 @@ void AXI_init()
   char** argv = NULL;
   Verilated::commandArgs(argc, argv);
 
+  skip_output_items = SKIP_OUTPUT_ITEMS;
+
   if (NULL == top)
     top = new Vaxi_module;
 }
 
-void AXI_reset(unsigned int skip_n)
-{
-  skip_output_items = skip_n > (unsigned int)SKIP_OUTPUT_ITEMS ? 
-                      skip_n : (unsigned int)SKIP_OUTPUT_ITEMS;
-  
+void AXI_reset(unsigned int module_flag)
+{ 
   top->ACLK = 0;
   top->ARESETn = 0;
   top->eval();
