@@ -46,7 +46,7 @@ class qa_verilog_axi_ii (gr_unittest.TestCase):
         result_data = dst.data()
         print (expected_result)
         print (result_data)
-        self.assertFloatTuplesAlmostEqual(expected_result, result_data, 9)
+        self.assertFloatTuplesAlmostEqual(expected_result, result_data, 12)
 
     def test_002_t (self):
         # set up fg
@@ -63,7 +63,7 @@ class qa_verilog_axi_ii (gr_unittest.TestCase):
         result_data = dst.data()
         print (expected_result)
         print (result_data)
-        self.assertFloatTuplesAlmostEqual(expected_result, result_data, 8)
+        self.assertFloatTuplesAlmostEqual(expected_result, result_data, 9)
 
 
 if __name__ == '__main__':
