@@ -1,6 +1,6 @@
 <block>
   <name>Verilog AXI</name>
-  <key>verilog_axi_ii</key>
+  <key>verilog_axi_xx</key>
   <category>[Verilog]</category>
   <import>import verilog</import>
   <make>verilog.verilog_axi_$(type.fcn)($file, $overwrite, $IO_ratio, $verilator_options, $module_flag, $skip_output_items)</make>
@@ -13,7 +13,6 @@
   <param>
     <name>IO Type</name>
     <key>type</key>
-    <value>Int</value>
     <type>enum</type>
     <option>
       <name>Complex</name>
