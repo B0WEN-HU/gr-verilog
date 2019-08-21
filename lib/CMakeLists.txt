@@ -31,6 +31,7 @@ list(APPEND verilog_sources
     
     Shell_cmd.cpp
     Shared_lib.cpp
+    verilog_axi_ff_impl.cc
 )
 
 set(verilog_sources "${verilog_sources}" PARENT_SCOPE)

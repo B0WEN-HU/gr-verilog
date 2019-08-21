@@ -22,5 +22,6 @@
 ########################################################################
 install(FILES
     api.h
-    verilog_axi_ii.h DESTINATION include/verilog
+    verilog_axi_ii.h
+    verilog_axi_ff.h DESTINATION include/verilog
 )

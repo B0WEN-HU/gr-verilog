@@ -13,7 +13,13 @@
   <param>
     <name>IO Type</name>
     <key>type</key>
+    <value>Int</value>
     <type>enum</type>
+    <option>
+      <name>Float</name>
+      <key>float</key>
+      <opt>fcn:ff</opt>
+    </option>
     <option>
       <name>Int</name>
       <key>int</key>
