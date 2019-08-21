@@ -16,6 +16,11 @@
     <value>Int</value>
     <type>enum</type>
     <option>
+      <name>Complex</name>
+      <key>complex</key>
+      <opt>fcn:cc</opt>
+    </option>
+    <option>
       <name>Float</name>
       <key>float</key>
       <opt>fcn:ff</opt>
@@ -24,6 +29,11 @@
       <name>Int</name>
       <key>int</key>
       <opt>fcn:ii</opt>
+    </option>
+    <option>
+      <name>Short</name>
+      <key>short</key>
+      <opt>fcn:ss</opt>
     </option>
   </param>
   <param>

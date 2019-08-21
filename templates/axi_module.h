@@ -3,6 +3,8 @@
 #include "Vaxi_module.h"
 #include "verilated.h"
 
+#include <complex>
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -39,6 +41,12 @@ unsigned char AXI_async_transfer_ff(const float &gr_input,
                                     float &gr_output,
                                     unsigned int &time);
 /* verilog_axi_ff */
+
+/* verilog_axi_cc */
+unsigned char AXI_async_transfer_cc(const std::complex<float> &gr_input,
+                                    std::complex<float> &gr_output,
+                                    unsigned int &time);
+/* verilog_axi_cc */
 
 void AXI_nop();
 

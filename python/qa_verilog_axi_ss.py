@@ -35,9 +35,9 @@ class qa_verilog_axi_ss (gr_unittest.TestCase):
         # set up fg
         src_data = (1, 3, 5, 9, 10, 12, 17, 19, 21, 12, 45, 29)
         expected_result = (1, 3, 5, 9, 10, 12, 17, 19, 21, 12, 45, 29)
-        src = blocks.vector_source_i(src_data)
-        vl = verilog.verilog_axi_ii("/home/bowen/Downloads/temp/saxi_passthru.v", True, 1.0, "-Wall", 0, 0)
-        dst = blocks.vector_sink_i()
+        src = blocks.vector_source_s(src_data)
+        vl = verilog.verilog_axi_ss("/home/bowen/Downloads/temp/saxi_passthru.v", True, 1.0, "-Wall", 0, 0)
+        dst = blocks.vector_sink_s()
 
         self.tb.connect(src, vl)
         self.tb.connect(vl, dst)
@@ -52,9 +52,9 @@ class qa_verilog_axi_ss (gr_unittest.TestCase):
         # set up fg
         src_data = (1, 3, 5, 9, 10, 12, 17, 19, 21)
         expected_result = (2, 6, 10, 18, 20, 24, 34, 38, 42)
-        src = blocks.vector_source_i(src_data)
-        vl = verilog.verilog_axi_ii("/home/bowen/Downloads/double/double_axi.v", True, 1.0, "", 0, 0)
-        dst = blocks.vector_sink_i()
+        src = blocks.vector_source_s(src_data)
+        vl = verilog.verilog_axi_ss("/home/bowen/Downloads/double/double_axi.v", True, 1.0, "", 0, 0)
+        dst = blocks.vector_sink_s()
 
         self.tb.connect(src, vl)
         self.tb.connect(vl, dst)

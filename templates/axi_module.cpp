@@ -6,6 +6,7 @@
  */
 #include "axi_module.h"
 #include <iostream>
+#include <complex>
 #include <cmath>
 
 #define MAX_ITERATION 512 
@@ -362,6 +363,83 @@ unsigned char AXI_async_transfer_ff(const float &gr_input,
 }
 /* verilog_axi_ff */
 
+
+/* verilog_axi_cc */
+unsigned int complex_to_fix(/*...*/)
+{
+  /* Please implement this function before use */
+  static bool flag = true;
+  if (flag) {
+    flag = false;
+        std::cout << "Please implement this function before use" << std::endl;
+  }
+  return 0;
+}
+std::complex<float> fix_to_complex(/*...*/)
+{
+  /* Please implement this function before use */
+  return 0;
+}
+unsigned char AXI_async_transfer_cc(const std::complex<float> &gr_input,
+                                    std::complex<float> &gr_output,
+                                    unsigned int &time)
+{
+  // Suppose the module is not SYNC
+  // input:ouput != 1:1
+  unsigned char status_code = 0;
+  /* status_code    status
+   *    00          ERROR
+   *    01          N/O (only ouput)
+   *    10          I/N (only input)
+   *    11          I/O (both input and output)
+   */
+
+  unsigned int cycle_tmp = 0;
+  bool in_tranfer_flag = false;
+  bool out_transfer_flag = false;
+  bool transfer_flag = false;
+  
+  top->TVALID_IN  = (uint8_t)true;
+  top->TREADY_OUT = (uint8_t)true;
+  
+  while (!transfer_flag && cycle_tmp < MAX_ITERATION) {
+    
+    if ((uint8_t)true == top->TREADY_IN) {
+      /* Please implement this function before use */
+      top->TDATA_IN = complex_to_fix(/*...*/);
+      in_tranfer_flag = true;
+    }
+
+    top->ACLK = 0;
+    top->eval();
+    top->ACLK = 1;
+    top->eval();
+
+    if ((uint8_t)true == top->TVALID_OUT) {
+      if (skip_output_items > 0) {
+        --skip_output_items;
+      }
+      else {
+        /* Please implement this function before use */
+        gr_output = fix_to_complex(/*...*/);
+        out_transfer_flag = true;
+      }
+    }
+
+    ++cycle_tmp;
+
+    transfer_flag = in_tranfer_flag || out_transfer_flag;
+  }
+
+  status_code =
+      ((unsigned char)in_tranfer_flag << 1) +
+      (unsigned char)out_transfer_flag;
+
+  time += cycle_tmp;
+
+  return status_code;
+}
+/* verilog_axi_cc */
 
 
 void AXI_nop()
