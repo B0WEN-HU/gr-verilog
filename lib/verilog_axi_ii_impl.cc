@@ -213,7 +213,7 @@ namespace gr {
       if (NULL == this->sim)
       {
         typedef void (*Initial_func) (void);
-        typedef void (*Reset_func) (unsigned int skip_n);
+        typedef void (*Reset_func) (unsigned int flag);
 
         Initial_func axi_init;
         Reset_func axi_reset;
