@@ -10,6 +10,7 @@
 %{
 #include "verilog/verilog_axi_ii.h"
 #include "verilog/verilog_axi_ff.h"
+#include "verilog/verilog_axi_ss.h"
 %}
 
 
@@ -17,3 +18,5 @@
 GR_SWIG_BLOCK_MAGIC2(verilog, verilog_axi_ii);
 %include "verilog/verilog_axi_ff.h"
 GR_SWIG_BLOCK_MAGIC2(verilog, verilog_axi_ff);
+%include "verilog/verilog_axi_ss.h"
+GR_SWIG_BLOCK_MAGIC2(verilog, verilog_axi_ss);
