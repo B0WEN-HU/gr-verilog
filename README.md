@@ -4,7 +4,7 @@
 
 **GSoC19 project: Cycle-accurate Verilog Design Simulation Integration**
 
-This is an OOT module for GNU Radio integrating verilog simultion. This module can run Verilog simulation at runtime in GNU Radio based on [Verilator](https://www.veripool.org/wiki/verilator/), an open-source Verilog simulator.
+This is an OOT module for GNU Radio integrating verilog simulation. This module can run Verilog simulation at runtime in GNU Radio based on [Verilator](https://www.veripool.org/wiki/verilator/), an open-source Verilog simulator.
 
 So far, serveral blocks namely `verilog_axi_ii`, `verilog_axi_ff`, `verilog_axi_ss` and `verilog_axi_cc`, hereinafter referred to as `verilog_axi_xx`, were implemented.
 
@@ -67,9 +67,9 @@ You can also use the `verilog_axi_xx` blocks in python. First you need to import
 ```python
 import verilog
 ```
-After that, you need to use following code to instantiate a `verilog_axi_xx` object with parameters wrapped in `"${ }"`. `${type.fcn}` represents the data type of the block `ii` for `Int`, `ff` for `Float`, `ss` for `Short` and `cc` for `Complex`. `${file}` is the filename of the Verilog file, `String` type, it should be an absolute path. `${overwrite}` is `Boolean` type, indicates wether to overwrite the template files in user's Verilog file directory. `${IO_ratio}` is `Float` type, it represents the ratio of number of input and output items, the right parameter can help the scheduler improve the performance. `${verilator_options}` is `String` type, the block passes the options to Verilator. `${skip_output_items}` is `Int` type, the block will skip first `skip_output_items` output items.
+After that, you need to use following code to instantiate a `verilog_axi_xx` object with parameters wrapped in `"${ }"`. `${type.fcn}` represents the data type of the block `ii` for `Int`, `ff` for `Float`, `ss` for `Short` and `cc` for `Complex`. `${file}` is the filename of the Verilog file, `String` type, it should be an absolute path. `${overwrite}` is `Boolean` type, indicates whether to overwrite the template files in user's Verilog file directory. `${IO_ratio}` is `Float` type, it represents the ratio of number of input and output items, the right parameter can help the scheduler improve the performance. `${verilator_options}` is `String` type, the block passes the options to Verilator. `${skip_output_items}` is `Int` type, the block will skip first `skip_output_items` output items.
 
-```python
+```
 vl = verilog.verilog_verilog_axi_${type.fcn}(${file}, ${overwrite}, ${IO_ratio}, ${verilator_options}, ${module_flag}, ${skip_output_items})
 ```
 
@@ -82,6 +82,8 @@ The example `apps/verilog_axi_ff_demo.grc` shows how `Verilog AXI` works with `F
 The `Complex` type of `Verilog AXI`, `verilog_axi_cc`, is not the block that is ready to use, you definitely will not use only 32 bits to represent a complex number, so you have to some do modifications on the template file in order to fit in your design. Please define the `_USER_MODIFIED_` macro to avoid unnecessary code being compiled (because if you changed the interfaces, there will be a lot of syntax errors in the existing template code).
 
 ## Future Work
+Add some image to README.md
+
 Add more examples.
 
 Bring verilog_general_xx into the module.
