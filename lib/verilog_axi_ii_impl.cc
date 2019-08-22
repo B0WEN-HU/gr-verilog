@@ -27,7 +27,7 @@
 #include <gnuradio/io_signature.h>
 #include <unistd.h>
 #include <stdexcept>
-
+#include <cmath>
 
 
 #include "verilog/constants.h"
