@@ -1,0 +1,52 @@
+id: verilog_verilog_axi_xx
+label: Verilog AXI
+flags: [ python, cpp ]
+
+parameters:
+-   id: file
+    label: Verilog File
+    dtype: file_open
+-   id: type
+    label: IO Type
+    dtype: enum
+    options: [complex, float, int, short]
+    option_attributes:
+        fcn: [cc, ff, ii, ss]
+    hide: part
+-   id: overwrite
+    label: Overwrite
+    dtype: enum
+    default: 'False'
+    options: ['True', 'False']
+    option_labels: ['Yes', 'No']
+-   id: IO_ratio
+    label: IO Ratio
+    dtype: real
+    default: '1.0'
+-   id: verilator_options
+    label: Verilator Options
+    dtype: string
+    default: '""'
+-   id: module_flag
+    label: Module Flag
+    dtype: int
+    default: '0'
+-   id: skip_output_items
+    label: Skip Output
+    dtype: int
+    default: '0'
+
+inputs:
+-   domain: stream
+    dtype: ${ type }
+
+outputs:
+-   domain: stream
+    dtype: ${ type }
+
+templates:
+    imports: import verilog
+    make: verilog.verilog_verilog_axi_${type.fcn}(${file}, ${overwrite}, ${IO_ratio}, ${verilator_options}, ${module_flag}, ${skip_output_items})
+
+
+file_format: 1

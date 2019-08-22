@@ -18,5 +18,6 @@
 # Boston, MA 02110-1301, USA.
 
 install(FILES
-    DESTINATION share/gnuradio/grc/blocks
+    verilog_verilog_axi_xx.xml DESTINATION share/gnuradio/grc/blocks
+    # verilog_verilog_axi.yml DESTINATION share/gnuradio/grc/blocks
 )

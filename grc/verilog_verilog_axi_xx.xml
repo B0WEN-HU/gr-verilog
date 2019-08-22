@@ -1,0 +1,84 @@
+<block>
+  <name>Verilog AXI</name>
+  <key>verilog_axi_xx</key>
+  <category>[Verilog]</category>
+  <import>import verilog</import>
+  <make>verilog.verilog_axi_$(type.fcn)($file, $overwrite, $IO_ratio, $verilator_options, $module_flag, $skip_output_items)</make>
+  <param>
+    <name>Verilog File</name>
+    <key>file</key>
+    <value/>
+    <type>file_open</type>
+  </param>
+  <param>
+    <name>IO Type</name>
+    <key>type</key>
+    <type>enum</type>
+    <option>
+      <name>Complex</name>
+      <key>complex</key>
+      <opt>fcn:cc</opt>
+    </option>
+    <option>
+      <name>Float</name>
+      <key>float</key>
+      <opt>fcn:ff</opt>
+    </option>
+    <option>
+      <name>Int</name>
+      <key>int</key>
+      <opt>fcn:ii</opt>
+    </option>
+    <option>
+      <name>Short</name>
+      <key>short</key>
+      <opt>fcn:ss</opt>
+    </option>
+  </param>
+  <param>
+    <name>Overwrite</name>
+    <key>overwrite</key>
+    <value>False</value>
+    <type>enum</type>
+    <option>
+      <name>Yes</name>
+      <key>True</key>
+    </option>
+    <option>
+      <name>No</name>
+      <key>False</key>
+    </option>
+  </param>
+  <param>
+    <name>IO Ratio</name>
+    <key>IO_ratio</key>
+    <value>1.0</value>
+    <type>float</type>
+  </param>
+  <param>
+    <name>Verilator Options</name>
+    <key>verilator_options</key>
+    <value/>
+    <type>string</type>
+  </param>
+  <param>
+    <name>Module Flag</name>
+    <key>module_flag</key>
+    <value>0</value>
+    <type>int</type>
+  </param>
+  <param>
+    <name>Skip Output</name>
+    <key>skip_output_items</key>
+    <value>0</value>
+    <type>int</type>
+  </param>
+  <sink>
+    <name>in</name>
+    <type>$type</type>
+  </sink>
+  <source>
+    <name>out</name>
+    <type>$type</type>
+  </source>
+</block>
