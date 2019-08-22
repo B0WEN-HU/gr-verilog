@@ -9,6 +9,9 @@
 #include <complex>
 #include <cmath>
 
+// define the _USER_MODIFIED_ to avoid unnecessary code being compiled
+/* #define _USER_MODIFIED_ */
+
 #define MAX_ITERATION 512 
 #define SKIP_OUTPUT_ITEMS 0
 
@@ -100,6 +103,7 @@ void AXI_sync_transfer_ii(const unsigned int &gr_input,
 }
 */
 
+#ifndef _USER_MODIFIED_
 /* verilog_axi_ii */
 unsigned char AXI_async_transfer_ii(const unsigned int &gr_input,
                                     unsigned int &gr_output,
@@ -440,6 +444,7 @@ unsigned char AXI_async_transfer_cc(const std::complex<float> &gr_input,
   return status_code;
 }
 /* verilog_axi_cc */
+#endif
 
 
 void AXI_nop()
