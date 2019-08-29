@@ -76,14 +76,16 @@ vl = verilog.verilog_verilog_axi_${type.fcn}(${file}, ${overwrite}, ${IO_ratio},
 ## Examples
 You can find the example `apps/verilog_axi_ii_demo.grc`. you need to specify the Verilog file for `Verilog AXI` block before running the flow graph. You can use the Verilog file `double_axi.v` in `examples/double/`. `double_axi.v` just take the input and shift 1 bit left (which double the input). Then, you should be able to see the results in the GUI.
 
-The example `apps/verilog_axi_ff_demo.grc` shows how `Verilog AXI` works with `Float` input and output. You can use a very same Verilog module as above, `double_axi.v`. You can see more obvious effects of what `double_axi.v` does. But how could the same Verilog module be able to deal with both integer and float number? Well, actually there is a pair of functions in the cpp template `templates/axi_module.cpp` named `float_to_fix` and `fix_to_float`, which can automatically convert floating point number and fixed point number. You may need to modify the function in order to fit in certain design.
+![verilog_axi_ii_demo](https://github.com/B0WEN-HU/gr-verilog/blob/master/examples/img/verilog_axi_ii_demo.png)
+
+The example `apps/verilog_axi_ff_demo.grc` shows how `Verilog AXI` works with `Float` input and output. You can use the very same Verilog module as above, `double_axi.v`. You can see more obvious effects of what `double_axi.v` does. But how could the same Verilog module be able to deal with both integer and float number? Well, actually there is a pair of functions in the cpp template `templates/axi_module.cpp` named `float_to_fix` and `fix_to_float`, which can automatically convert floating point number and fixed point number. You may need to modify the function in order to fit in certain design.
+
+![verilog_axi_ff_demo](https://github.com/B0WEN-HU/gr-verilog/blob/master/examples/img/verilog_axi_ff_demo.png)
 
 ## Hint
 The `Complex` type of `Verilog AXI`, `verilog_axi_cc`, is not the block that is ready to use, you definitely will not use only 32 bits to represent a complex number, so you have to some do modifications on the template file in order to fit in your design. Please define the `_USER_MODIFIED_` macro to avoid unnecessary code being compiled (because if you changed the interfaces, there will be a lot of syntax errors in the existing template code).
 
 ## Future Work
-Add some image to README.md
-
 Add more examples.
 
 Bring verilog_general_xx into the module.
