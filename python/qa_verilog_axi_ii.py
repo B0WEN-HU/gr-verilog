@@ -22,6 +22,7 @@
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
 import verilog_swig as verilog
+import os
 
 class qa_verilog_axi_ii (gr_unittest.TestCase):
 
@@ -36,7 +37,8 @@ class qa_verilog_axi_ii (gr_unittest.TestCase):
         src_data = (1, 3, 5, 9, 10, 12, 17, 19, 21, 12, 45, 29)
         expected_result = (1, 3, 5, 9, 10, 12, 17, 19, 21, 12, 45, 29)
         src = blocks.vector_source_i(src_data)
-        vl = verilog.verilog_axi_ii("/home/bowen/Downloads/temp/saxi_passthru.v", True, 1.0, "-Wall", 0, 0)
+        path = os.path.dirname(__file__) if len(os.path.dirname(__file__)) != 0 else '.'
+        vl = verilog.verilog_axi_ii(path + "/testcases/passthru/saxi_passthru.v", True, 1.0, "", 0, 0)
         dst = blocks.vector_sink_i()
 
         self.tb.connect(src, vl)
@@ -53,7 +55,8 @@ class qa_verilog_axi_ii (gr_unittest.TestCase):
         src_data = (1, 3, 5, 9, 10, 12, 17, 19, 21)
         expected_result = (2, 6, 10, 18, 20, 24, 34, 38, 42)
         src = blocks.vector_source_i(src_data)
-        vl = verilog.verilog_axi_ii("/home/bowen/Downloads/double/double_axi.v", True, 1.0, "", 0, 0)
+        path = os.path.dirname(__file__) if len(os.path.dirname(__file__)) != 0 else '.'
+        vl = verilog.verilog_axi_ii(path + "/testcases/double/double_axi.v", True, 1.0, "", 0, 0)
         dst = blocks.vector_sink_i()
 
         self.tb.connect(src, vl)

@@ -22,6 +22,7 @@
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
 import verilog_swig as verilog
+import os
 
 class qa_verilog_axi_ff (gr_unittest.TestCase):
 
@@ -36,7 +37,8 @@ class qa_verilog_axi_ff (gr_unittest.TestCase):
         src_data = (1.2, 3.8, 5.7, 9.4, 10.2, 12.4, 17.5, 19.2, 21.4, 12.3, 45.5, 29.3)
         expected_result = (1.2, 3.8, 5.7, 9.4, 10.2, 12.4, 17.5, 19.2, 21.4, 12.3, 45.5, 29.3)
         src = blocks.vector_source_f(src_data)
-        vl = verilog.verilog_axi_ff("/home/bowen/Downloads/temp/saxi_passthru.v", True, 1.0, "-Wall", 0, 0)
+        path = os.path.dirname(__file__) if len(os.path.dirname(__file__)) != 0 else '.'
+        vl = verilog.verilog_axi_ff(path + "/testcases/passthru/saxi_passthru.v", True, 1.0, "", 0, 0)
         dst = blocks.vector_sink_f()
 
         self.tb.connect(src, vl)
@@ -59,7 +61,8 @@ class qa_verilog_axi_ff (gr_unittest.TestCase):
         src_data = (1.2, 3.8, 5.7, 9.4, 10.2, 12.4, 17.5, 19.2, 21.4)
         expected_result = (2.4, 7.6, 11.4, 18.8, 20.4, 24.8, 35.0, 38.4, 42.8)
         src = blocks.vector_source_f(src_data)
-        vl = verilog.verilog_axi_ff("/home/bowen/Downloads/double/double_axi.v", True, 1.0, "", 0, 0)
+        path = os.path.dirname(__file__) if len(os.path.dirname(__file__)) != 0 else '.'
+        vl = verilog.verilog_axi_ff(path + "/testcases/double/double_axi.v", True, 1.0, "", 0, 0)
         dst = blocks.vector_sink_f()
 
         self.tb.connect(src, vl)
