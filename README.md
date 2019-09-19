@@ -6,7 +6,7 @@
 
 This is an OOT module for GNU Radio integrating verilog simulation. This module can run Verilog simulation at runtime in GNU Radio based on [Verilator](https://www.veripool.org/wiki/verilator/), an open-source Verilog simulator.
 
-So far, serveral blocks namely `verilog_axi_ii`, `verilog_axi_ff`, `verilog_axi_ss` and `verilog_axi_cc`, hereinafter referred to as `verilog_axi_xx`, were implemented.
+So far, serveral blocks namely `verilog_axi_ii`, `verilog_axi_ff`, `verilog_axi_ss`, `verilog_axi_bb` and `verilog_axi_cc`, hereinafter referred to as `verilog_axi_xx`, were implemented.
 
 The `verilog_axi_xx` block can be used in both python code or GNU Radio Companion.
 

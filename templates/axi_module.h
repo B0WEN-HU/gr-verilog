@@ -36,6 +36,12 @@ unsigned char AXI_async_transfer_ss(const unsigned short &gr_input,
                                     unsigned int &time);
 /* verilog_axi_ss */
 
+/* verilog_axi_bb */
+unsigned char AXI_async_transfer_bb(const unsigned char &gr_input,
+                                    unsigned char &gr_output,
+                                    unsigned int &time);
+/* verilog_axi_b */
+
 /* verilog_axi_ff */
 unsigned char AXI_async_transfer_ff(const float &gr_input,
                                     float &gr_output,

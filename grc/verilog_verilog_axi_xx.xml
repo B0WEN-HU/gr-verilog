@@ -34,6 +34,11 @@
       <key>short</key>
       <opt>fcn:ss</opt>
     </option>
+    <option>
+      <name>Byte</name>
+      <key>byte</key>
+      <opt>fcn:bb</opt>
+    </option>
   </param>
   <param>
     <name>Overwrite</name>

@@ -9,9 +9,9 @@ parameters:
 -   id: type
     label: IO Type
     dtype: enum
-    options: [complex, float, int, short]
+    options: [complex, float, int, short, byte]
     option_attributes:
-        fcn: [cc, ff, ii, ss]
+        fcn: [cc, ff, ii, ss, bb]
     hide: part
 -   id: overwrite
     label: Overwrite
