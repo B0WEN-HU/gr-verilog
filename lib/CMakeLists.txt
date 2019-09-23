@@ -33,6 +33,7 @@ list(APPEND verilog_sources
     Shared_lib.cpp
     verilog_axi_ff_impl.cc
     verilog_axi_ss_impl.cc
+    verilog_axi_bb_impl.cc
     verilog_axi_cc_impl.cc
 )
 
