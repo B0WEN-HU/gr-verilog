@@ -45,3 +45,4 @@ GR_ADD_TEST(qa_verilog_axi_ii ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/q
 GR_ADD_TEST(qa_verilog_axi_ff ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_verilog_axi_ff.py)
 GR_ADD_TEST(qa_verilog_axi_ss ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_verilog_axi_ss.py)
 GR_ADD_TEST(qa_verilog_axi_cc ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_verilog_axi_cc.py)
+GR_ADD_TEST(qa_verilog_axi_bb ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_verilog_axi_ss.py)
